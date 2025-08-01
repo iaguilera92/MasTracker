@@ -42,7 +42,7 @@ const MenuInferior = ({ cardSize }) => {
         },
     };
 
-    const orden = ["/", "/dashboard", "/configurar-servicios"];
+    const orden = ["/configurar-servicios", "/dashboard", "/"];
     const rutaCentral = orden.find(r => pathname.startsWith(r)) || "/dashboard";
     const rutasLaterales = orden.filter(r => r !== rutaCentral);
 
@@ -82,9 +82,17 @@ const MenuInferior = ({ cardSize }) => {
                         style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
                     >
                         {icono}
-                        <Typography variant="caption" fontWeight="bold" fontSize={15} color="success.main">
+                        <Typography
+                            variant="caption"
+                            fontWeight="bold"
+                            fontSize={esCentral ? 15 : 11}
+                            sx={{
+                                color: "black"
+                            }}
+                        >
                             {texto}
                         </Typography>
+
                     </motion.div>
                 ) : (
                     <Box

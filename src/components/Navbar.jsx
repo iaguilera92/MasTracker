@@ -160,10 +160,10 @@ const menuItems = [
   { name: "INICIO", icon: <HomeIcon /> },
   { name: "FLOTA", icon: <DirectionsCarIcon /> },
   { name: "OBDII", icon: <SettingsInputComponentIcon /> },
-  { name: "DATACORE", icon: <StorageIcon /> },
+  //{ name: "DATACORE", icon: <StorageIcon /> },
   { name: "EVENTOS", icon: <EventIcon /> },
   { name: "ALARMAS", icon: <NotificationsActiveIcon /> },
-  { name: "CONFIGURACIÓN", icon: <SettingsIcon /> },
+  //{ name: "CONFIGURACIÓN", icon: <SettingsIcon /> },
 ];
 
 
@@ -220,11 +220,9 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
     setOpen(false);
 
     const enConstruccion = [
-      "FLOTA",
       "OBDII",
       "DATACORE",
       "EVENTOS",
-      "ALARMAS",
       "CONFIGURACIÓN",
     ];
 
@@ -238,6 +236,14 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
 
     const actions = {
       INICIO: () => (location.pathname !== "/" ? navigate("/") : scrollToTop()),
+      FLOTA: () => (location.pathname == "/dashboard" ? navigate("/dashboard") : scrollToTop()),
+      ALARMAS: () => {
+        if (location.pathname !== "/alarmas") {
+          navigate("/alarmas");
+        } else {
+          scrollToTop();
+        }
+      },
     };
 
     actions[item.name]?.();

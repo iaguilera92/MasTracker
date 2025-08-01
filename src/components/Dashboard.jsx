@@ -123,65 +123,6 @@ const Dashboard = () => {
                 overflow: "hidden",
             }}
         >
-            <Grid item sx={{ pt: isMobile ? 12 : 10 }}>
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "white",
-                        gap: 1,
-                        mb: 1,
-                        flexWrap: "wrap",
-                    }}
-                >
-                    <Typography
-                        variant="h6"
-                        fontWeight="bold"
-                        sx={{
-                            display: "inline-flex",
-                            flexWrap: "wrap",
-                            justifyContent: "center",
-                        }}
-                    >
-                        {"Bienvenido ".split("").map((char, index) => (
-                            <motion.span
-                                key={`char-${index}`}
-                                custom={index}
-                                variants={letterVariants}
-                                initial="hidden"
-                                animate="visible"
-                                style={{ display: "inline-block" }}
-                            >
-                                {char === " " ? "\u00A0" : char}
-                            </motion.span>
-                        ))}
-
-                        {/* Si hay usuario, mostramos su nombre animado */}
-                        {usuario &&
-                            usuario.nombre.split("").map((char, index) => (
-                                <motion.span
-                                    key={`nombre-${index}`}
-                                    custom={index + 10}
-                                    variants={letterVariants}
-                                    initial="hidden"
-                                    animate="visible"
-                                    style={{ display: "inline-block" }}
-                                >
-                                    {char === " " ? "\u00A0" : char}
-                                </motion.span>
-                            ))}
-                    </Typography>
-
-                    <motion.div
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 1.4, duration: 0.5 }}
-                    >
-                        <AdminPanelSettingsIcon sx={{ fontSize: 26, color: "white" }} />
-                    </motion.div>
-                </Box>
-            </Grid>
 
             <Grid
                 container
@@ -189,7 +130,7 @@ const Dashboard = () => {
                 justifyContent="top"
                 alignItems="center"
                 direction="column"
-                sx={{ width: "100%", flexGrow: 1 }}
+                sx={{ width: "100%", flexGrow: 1, pt: isMobile ? 12 : 12 }}
             >
                 {/* CONTENIDO PRINCIPAL */}
                 <Grid item>
@@ -342,10 +283,6 @@ const Dashboard = () => {
 
                     </Paper>
                 </Grid>
-
-
-                <MenuInferior cardSize={cardSize} modo="dashboard" />
-
 
 
             </Grid >
