@@ -15,6 +15,7 @@ const ConfigurarServicios = lazy(() => import("./components/configuraciones/Conf
 const Alarmas = lazy(() => import("./components/configuraciones/Alarmas"));
 const Eventos = lazy(() => import("./components/configuraciones/Eventos"));
 const Flotas = lazy(() => import("./components/configuraciones/Flotas"));
+const Flota = lazy(() => import("./components/configuraciones/Flota"));
 
 // ✅ Función para proteger rutas con autenticación
 const isAuthenticated = () => {
@@ -81,6 +82,14 @@ const router = createBrowserRouter(
                     element: (
                         <ProtectedRoute>
                             {withSuspense(Flotas)}
+                        </ProtectedRoute>
+                    ),
+                },
+                {
+                    path: "flota",
+                    element: (
+                        <ProtectedRoute>
+                            {withSuspense(Flota)}
                         </ProtectedRoute>
                     ),
                 },

@@ -157,12 +157,12 @@ const SocialButton = ({ href, Icon, bgColor, hoverStyles }) => (
 );
 
 const menuItems = [
-  { name: "INICIO", icon: <HomeIcon /> },
-  { name: "FLOTA", icon: <DirectionsCarIcon /> },
+  { name: "Inicio", icon: <HomeIcon /> },
+  { name: "Flotas", icon: <DirectionsCarIcon /> },
   //{ name: "OBDII", icon: <SettingsInputComponentIcon /> },
   //{ name: "DATACORE", icon: <StorageIcon /> },
-  { name: "EVENTOS", icon: <EventIcon /> },
-  { name: "ALARMAS", icon: <NotificationsActiveIcon /> },
+  { name: "Eventos", icon: <EventIcon /> },
+  { name: "Alarmas", icon: <NotificationsActiveIcon /> },
   //{ name: "CONFIGURACIÓN", icon: <SettingsIcon /> },
 ];
 
@@ -233,22 +233,22 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
     }
 
     const actions = {
-      INICIO: () => (location.pathname !== "/" ? navigate("/") : scrollToTop()),
-      FLOTA: () => {
+      Inicio: () => (location.pathname !== "/" ? navigate("/") : scrollToTop()),
+      Flotas: () => {
         if (location.pathname !== "/flotas") {
           navigate("/flotas");
         } else {
           scrollToTop();
         }
       },
-      ALARMAS: () => {
+      Alarmas: () => {
         if (location.pathname !== "/alarmas") {
           navigate("/alarmas");
         } else {
           scrollToTop();
         }
       },
-      EVENTOS: () => {
+      Eventos: () => {
         if (location.pathname !== "/eventos") {
           navigate("/eventos");
         } else {
@@ -311,13 +311,18 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
                       style={{ cursor: "pointer" }}
                     >
                       <motion.img
-                        src="/logo-masautomatizacion-white.png"
+                        src="/logo-mastracker-white.png"
                         alt="Logo"
                         onClick={LogoInicio}
                         initial={{ scale: 1 }}
                         animate={{ scale: isScrolled ? 0.8 : 1 }}
+                        exit={{ opacity: 0 }} // ✅
                         transition={{ duration: 0.3, ease: "easeOut" }}
                         style={{ height: "55px", marginTop: "10px", cursor: "pointer" }}
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/fallback-logo.png"; // 👈 puedes usar un logo alternativo
+                        }}
                       />
                     </motion.div>
                   )}
@@ -486,7 +491,7 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
                   <Box sx={{ display: "flex", alignItems: "center", mb: 0 }}>
                     <Box
                       component="img"
-                      src="/logo-masautomatizacion-white.png"
+                      src="/logo-mastracker-white-1.png"
                       alt="Bienvenidos"
                       sx={{
                         width: 65,
@@ -504,7 +509,7 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
                         letterSpacing: 0.3,
                       }}
                     >
-                      Bienvenid@ a MásAutomatización
+                      Bienvenid@ a MásTracker
                     </Typography>
                   </Box>
 

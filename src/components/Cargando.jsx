@@ -144,7 +144,7 @@ const Cargando = () => {
                 >
 
                     <motion.img
-                        src="/logo-masautomatizacion-1-white.png"
+                        src="/logo-mastracker-white-1.png"
                         alt="masautomatizacion Icono"
                         style={{
                             width: 90,
@@ -157,7 +157,7 @@ const Cargando = () => {
 
                     {/* Texto deslizante con fadeIn */}
                     <motion.img
-                        src="/logo-masautomatizacion-2-white.png"
+                        src="/logo-mastracker-white-2.png"
                         alt="masautomatizacion Consultores"
                         style={{ width: 180, height: 'auto' }}
                         initial={{ opacity: 0, x: 40 }}

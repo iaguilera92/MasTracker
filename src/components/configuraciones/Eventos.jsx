@@ -29,11 +29,36 @@ const letterVariants = {
   }),
 };
 
+const rowVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: 0.3 + i * 0.1,
+      duration: 0.4,
+      ease: "easeOut",
+    },
+  }),
+};
+const containerVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut"
+    }
+  }
+};
 const Eventos = () => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '' });
   const containerRef = useRef(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const MotionTableRow = motion(TableRow);
+  const MotionTableContainer = motion(TableContainer);
 
   const titulo = isMobile ? "Eventos (Historial)" : "Eventos (Historial en tiempo real)";
 
@@ -84,7 +109,18 @@ const Eventos = () => {
           </Typography>
         </Box>
 
-        <TableContainer component={Paper} sx={{ borderRadius: 3, backgroundColor: "white" }}>
+        <MotionTableContainer
+          component={Paper}
+          sx={{
+            borderRadius: 3,
+            backgroundColor: "white",
+            position: "relative", // evita reflow visual
+            overflowY: "scroll",
+          }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
           <Table>
             <TableHead>
               <TableRow>
@@ -96,16 +132,23 @@ const Eventos = () => {
             </TableHead>
             <TableBody>
               {filas.map((row, index) => (
-                <TableRow key={index}>
+                <MotionTableRow
+                  key={index}
+                  custom={index}
+                  variants={rowVariants}
+                  initial="hidden"
+                  animate="visible"
+                  layout
+                >
                   <TableCell>{row.tipo}</TableCell>
                   <TableCell>{row.historial}</TableCell>
                   <TableCell>{row.vehiculo}</TableCell>
                   <TableCell>{row.hora}</TableCell>
-                </TableRow>
+                </MotionTableRow>
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
+        </MotionTableContainer>
       </Box>
 
       <Snackbar

@@ -6,9 +6,6 @@ import { useInView } from 'react-intersection-observer';  // Importa el hook
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import "./css/Informations.css"; // Importamos el CSS
 import "swiper/css";
-import CircularProgress from "@mui/material/CircularProgress";
-import EngineeringIcon from '@mui/icons-material/Engineering';
-
 
 const anuncios = [
   {
@@ -25,7 +22,7 @@ const anuncios = [
     ]
   },
   {
-    title: "Servicio Mecánica DSL/BNC",
+    title: "Servicio de Mecánica Integral",
     description: "Reparación y ajuste de motores diésel y BNC con herramientas expertas.",
     image: "/Informations-2.webp",
     bgColor: "linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.2))",
@@ -84,14 +81,7 @@ const Informations = () => {
     triggerOnce: true,
   });
   const [hasAnimated, setHasAnimated] = useState(false);
-  const [animationKey, setAnimationKey] = useState(0);
-  const [loadingVideo, setLoadingVideo] = useState(true);
 
-  useEffect(() => {
-    if (inView) {
-      setShouldAnimate(true); // 🔹 Activa la animación cuando el componente es visible
-    }
-  }, [inView]);
 
   //ANIMACIÓN DESCRIPTORES
   useEffect(() => {
@@ -119,6 +109,12 @@ const Informations = () => {
     window.open(url, "_blank");
   };
 
+  useEffect(() => {
+    if (inView) {
+      setShouldAnimate(true);
+    }
+  }, [inView]);
+
   return (
     <Box
       sx={{
@@ -127,66 +123,28 @@ const Informations = () => {
         height: "auto",
         py: 0,
         pt: isMobile ? 10 : 9,
-        marginTop: 0, // 🔧 se baja en escritorio
+        marginTop: 0,
         marginBottom: "0px",
         color: "white",
-        overflow: "hidden", // necesario para que el video no sobresalga
+        overflow: "hidden",
       }}
     >
+      {/* Fondo con imagen fija */}
       <Box
         sx={{
-          position: "absolute",
+          position: "fixed",
           top: 0,
           left: 0,
-          width: "100%",
-          height: "100%",
-          overflow: "hidden",
-          zIndex: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundImage: "url(fondo-blizz.avif)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          zIndex: -1,
         }}
       >
-        {loadingVideo && (
-          <Box
-            sx={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              zIndex: 2,
-              width: "100%",
-              height: "100%",
-              backgroundColor: "rgba(0,0,0,0.4)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <CircularProgress size={60} sx={{ color: "#ffffff" }} />
-          </Box>
-        )}
-
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          onLoadedData={() => setLoadingVideo(false)}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: isMobile ? "center bottom" : "center bottom",
-            transform: isMobile ? "scale(1.5) translateY(-15%)" : "scale(1)",
-            transition: "transform 0.3s ease-out",
-            pointerEvents: "none",
-          }}
-          disablePictureInPicture
-          controlsList="nodownload nofullscreen noremoteplayback"
-        >
-          <source
-            src={isMobile ? "reunion-trabajo-movil.mp4" : "reunion-trabajo.mp4"}
-            type="video/mp4"
-          />
-        </video>
-
+        {/* Capa oscura encima del fondo */}
         <Box
           sx={{
             position: "absolute",
@@ -194,57 +152,24 @@ const Informations = () => {
             left: 0,
             width: "100%",
             height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.3)", // más opaco aún si deseas
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
             zIndex: 1,
             pointerEvents: "none",
           }}
         />
       </Box>
 
+
+
       <Container sx={{ textAlign: "center", color: "white", maxWidth: "1400px !important", }}>
 
-        <Box sx={{ position: "relative", textAlign: "center", mb: 2 }}>
+        <Box ref={ref} sx={{ position: "relative", textAlign: "center", mb: 2, mt: 6 }}>
 
-          <Box
-            ref={ref} // 🔹 Conecta el detector de scroll
-            sx={{
-              width: 25,
-              height: 25,
-              borderRadius: "50%",
-              backgroundColor: "white",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              border: "2px solid white",
-              mx: "auto",
-              mb: 0.5,
-            }}
-          >
-            <motion.div
-              initial={{ rotate: 0 }}
-              animate={shouldAnimate ? { rotate: 360 } : {}} // 🔹 Solo se activa cuando `shouldAnimate` es `true`
-              transition={{
-                duration: 0.3,
-                delay: 0.3,
-                repeat: 2, // Se repite una vez más (total: dos veces)
-                ease: "linear", // Movimiento fluido
-              }}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                height: "100%",
-              }}
-            >
-              <EngineeringIcon sx={{ color: 'black', fontSize: 17 }} />
-            </motion.div>
-          </Box>
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
-            animate={shouldAnimate ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, ease: 'easeOut' }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.6, ease: 'easeOut' }}
           >
             <Typography
               variant="h4"
@@ -273,7 +198,7 @@ const Informations = () => {
                 },
               }}
             >
-              {isMobile ? "Servicios" : "Soluciones en Ingeniería y Automatización"}
+              {isMobile ? "Servicios" : "Servicios Más Tracker"}
             </Typography>
 
           </motion.div>
@@ -282,7 +207,7 @@ const Informations = () => {
           <motion.hr
             initial={{ opacity: 0 }} // Comienza invisible
             animate={shouldAnimate ? { opacity: 1 } : {}} // Aparece completamente
-            transition={{ duration: 0.8, delay: 1 }} // Aparece después de 1s y dura 1s
+            transition={{ duration: 0.8, delay: 1.6 }} // Aparece después de 1s y dura 1s
             style={{
               position: "absolute",
               top: isMobile ? "calc(80% - 12px)" : "calc(100% - 30px)", // Ajusta la posición
@@ -301,7 +226,7 @@ const Informations = () => {
         <Grid item xs={12} md={6}>
           <Box ref={swiperRef} sx={{ overflow: "visible", display: isMobile ? "block" : "block", position: "relative", px: 1, pt: 2, pb: 5 }}>
 
-            {!loadingVideo && swiperInView && (
+            {swiperInView && (
               <Swiper
                 spaceBetween={24}
                 slidesPerView={isMobile ? 1.2 : 4.1}
@@ -317,9 +242,9 @@ const Informations = () => {
                 {anuncios.map((anuncio, index) => (
                   <SwiperSlide key={index}>
                     <motion.div
-                      initial={!isMobile ? { opacity: 0, x: 100 } : null}
-                      animate={!isMobile ? { opacity: 1, x: 0 } : null}
-                      transition={!isMobile ? { duration: 0.8, delay: 1.6, ease: "easeOut" } : null}
+                      initial={!isMobile ? { opacity: 0, x: 100 } : undefined}
+                      animate={!isMobile ? { opacity: 1, x: 0 } : undefined}
+                      transition={!isMobile ? { duration: 0.6, delay: 1.6 + index * 0.3, ease: "easeOut" } : undefined}
                     >
                       <Box
                         sx={{
@@ -352,7 +277,7 @@ const Informations = () => {
                             left: 0,
                             width: "100%",
                             height: "100%",
-                            background: "linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0))",
+                            background: "linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0))",
                             zIndex: 2
                           }}
                         />

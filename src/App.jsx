@@ -242,10 +242,6 @@ function App() {
           </>
         )}
 
-
-        {/* Footer (excepto en administración) */}
-        {location.pathname !== "/login" && location.pathname !== "/dashboard" && location.pathname !== "/configurar-servicios" && <Footer />}
-
         {/* Botón WhatsApp */}
         {location.pathname !== "/login" && location.pathname !== "/dashboard" && location.pathname !== "/configurar-servicios" && (
           <Box
