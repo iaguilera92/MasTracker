@@ -115,7 +115,7 @@ const Administracion = () => {
         backgroundColor: "rgba(0,0,0,0.6)", color: "white", p: 4, borderRadius: 3,
         maxWidth: 350, width: "90%", textAlign: "center", mt: isMobile ? -2 : 0
       }}>
-        <Box component="img" src="/logo-masautomatizacion-1-white.png" alt="Usuario" sx={{
+        <Box component="img" src="/logo-mastracker-white-1.png" alt="Usuario" sx={{
           width: 80, height: 80, borderRadius: "50%", objectFit: "cover",
           margin: "0 auto", mb: 2
         }} />
