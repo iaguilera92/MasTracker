@@ -14,7 +14,13 @@ const Dashboard = lazy(() => import("./components/Dashboard"));
 const ConfigurarServicios = lazy(() => import("./components/configuraciones/ConfigurarServicios"));
 const Alarmas = lazy(() => import("./components/configuraciones/Alarmas"));
 const Eventos = lazy(() => import("./components/configuraciones/Eventos"));
-const Flotas = lazy(() => import("./components/configuraciones/Flotas"));
+const Flotas = lazy(() =>
+    import("./components/configuraciones/Flotas").catch((err) => {
+        console.warn("Fallo al cargar Flotas, recargando...", err);
+        window.location.reload();
+        return new Promise(() => { }); // evita renderización
+    })
+);
 const Flota = lazy(() => import("./components/configuraciones/Flota"));
 
 // ✅ Función para proteger rutas con autenticación
