@@ -10,6 +10,7 @@ import Dashboard from '../Dashboard';
 import CloseIcon from '@mui/icons-material/Close';
 import { useLocation } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useNavigate } from 'react-router-dom';
 
 const flota = [
   // Flota 1 (9 registros)
@@ -60,6 +61,7 @@ const Flota = () => {
   const { state } = useLocation();
   const nombreFlota = state?.flota;
   const vehiculosFiltrados = flota.filter(f => f.nombreFlota === nombreFlota);
+  const navigate = useNavigate();
 
   const handleExpandClick = (index) => {
     const wasExpanded = expandedIndex === index;

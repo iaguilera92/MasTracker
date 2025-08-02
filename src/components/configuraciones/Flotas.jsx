@@ -1,17 +1,25 @@
 import React from 'react';
 import {
-  Box, Container, Grid, Typography, Card, CardContent, Button
+  Box, Container, Grid, Typography, Card, CardContent, Button, useTheme, useMediaQuery, Chip
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import { motion } from 'framer-motion';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 const flotas = [
-  { nombre: 'Flota 1', cantidad: 9 },
-  { nombre: 'Flota 2', cantidad: 5 },
+  { nombre: 'Flota 1', cantidad: 9, destacada: true },
+  { nombre: 'Flota 2', cantidad: 5, destacada: false },
   { nombre: 'Flota 3', cantidad: 7 },
 ];
-
+const letterVariants = {
+  hidden: { opacity: 0, x: -20 },
+  visible: (i) => ({
+    opacity: 1,
+    x: 0,
+    transition: { delay: 0.4 + i * 0.1 },
+  }),
+};
 const cardVariants = {
   hidden: { opacity: 0, y: 30 },
   visible: (i) => ({
@@ -23,7 +31,8 @@ const cardVariants = {
 
 const Flotas = () => {
   const navigate = useNavigate();
-
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const handleIrAFlota = (nombre) => {
     navigate('/flota', { state: { flota: nombre } });
 
@@ -42,20 +51,38 @@ const Flotas = () => {
         backgroundAttachment: 'fixed',
         backgroundPosition: 'center',
         py: 12,
-        px: 4,
+        px: isMobile ? 3 : 6,
       }}
     >
-      <Typography
-        variant="h4"
-        sx={{
-          color: 'white',
-          fontWeight: 700,
-          mb: 4,
-          fontFamily: "'Montserrat', sans-serif",
-        }}
-      >
-        Flotas Agrupadas
-      </Typography>
+      {/* TÍTULO */}
+      <Box display="flex" alignItems="center" mb={2} gap={1}>
+        <DirectionsCarIcon sx={{ color: '#ffb905', fontSize: 28 }} />
+        <Typography
+          variant="h5"
+          component="div"
+          sx={{
+            fontWeight: 600,
+            color: 'white',
+            display: 'flex',
+            gap: '2px',
+            fontFamily: "'Montserrat', sans-serif",
+          }}
+        >
+          {"Flotas".split('').map((char, i) => (
+            <motion.span
+              key={i}
+              custom={i}
+              variants={letterVariants}
+              initial="hidden"
+              animate="visible"
+              style={{ display: 'inline-block' }}
+            >
+              {char === ' ' ? '\u00A0' : char}
+            </motion.span>
+          ))}
+        </Typography>
+      </Box>
+
 
       <Grid container spacing={3}>
         {flotas.map((flota, index) => (
@@ -65,9 +92,12 @@ const Flotas = () => {
               variants={cardVariants}
               initial="hidden"
               animate="visible"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
             >
               <Card
                 sx={{
+                  position: 'relative', // <--- esto es clave
                   backgroundColor: 'white',
                   borderRadius: 3,
                   boxShadow: 3,
@@ -77,9 +107,38 @@ const Flotas = () => {
                   },
                 }}
               >
+
+                {flota.destacada && (
+                  <Chip
+                    label="⭐ Destacada"
+                    size="small"
+                    color="warning"
+                    sx={{
+                      position: 'absolute',
+                      top: 10,
+                      right: 10,
+                      fontWeight: 'bold',
+                      color: 'white',
+                      boxShadow: 2
+                    }}
+                  />
+                )}
                 <CardContent>
                   <Box display="flex" alignItems="center" gap={1} mb={1}>
-                    <DirectionsCarIcon sx={{ color: '#0064b4' }} />
+                    <Box
+                      sx={{
+                        backgroundColor: '#0064b4',
+                        color: 'white',
+                        width: 36,
+                        height: 36,
+                        borderRadius: '50%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <DirectionsCarIcon fontSize="small" />
+                    </Box>
                     <Typography variant="h6" fontWeight={600}>
                       {flota.nombre}
                     </Typography>
@@ -90,6 +149,7 @@ const Flotas = () => {
                   <Button
                     variant="contained"
                     fullWidth
+                    startIcon={<KeyboardArrowRightIcon />}
                     sx={{
                       backgroundColor: '#0064b4',
                       color: 'white',
@@ -101,6 +161,7 @@ const Flotas = () => {
                   >
                     Ver vehículos
                   </Button>
+
 
                 </CardContent>
               </Card>
