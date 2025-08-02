@@ -190,13 +190,13 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
   const [animacionMostrada, setAnimacionMostrada] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!mostrarAnimacion && !animacionMostrada) {
-        setAnimacionMostrada(true); // Forzar SIEMPRE a los 5s
-      }
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+    if (!mostrarAnimacion && !animacionMostrada) {
+      const timer = setTimeout(() => {
+        setAnimacionMostrada(true);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [mostrarAnimacion, animacionMostrada]);
 
 
   useEffect(() => {
