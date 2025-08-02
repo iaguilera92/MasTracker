@@ -120,15 +120,16 @@ const Informations = () => {
       sx={{
         position: "relative",
         zIndex: 10,
-        height: "auto",
         py: 0,
         pt: isMobile ? 10 : 9,
         marginTop: 0,
         marginBottom: "0px",
         color: "white",
         overflow: "hidden",
+        minHeight: "100vh", // ✅ fuerza que el fondo se muestre completo
       }}
     >
+
       {/* Fondo con imagen fija */}
       <Box
         sx={{
