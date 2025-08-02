@@ -1,4 +1,4 @@
-import { Box, Typography, Container, Grid, Button, ListItem, ListItemIcon, ListItemText, useMediaQuery, useTheme, IconButton } from "@mui/material";
+import { Box, Typography, Container, Grid, Button, useMediaQuery, useTheme, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -6,53 +6,64 @@ import { useInView } from 'react-intersection-observer';  // Importa el hook
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import "./css/Informations.css"; // Importamos el CSS
 import "swiper/css";
-import PrecisionManufacturingIcon from '@mui/icons-material/PrecisionManufacturing';
-import InsightsIcon from '@mui/icons-material/Insights';
-import ElectricalServicesIcon from '@mui/icons-material/ElectricalServices';
-import SchoolIcon from '@mui/icons-material/School';
+import CircularProgress from "@mui/material/CircularProgress";
+import EngineeringIcon from '@mui/icons-material/Engineering';
 
-const promotions = [
+
+const anuncios = [
   {
-    title: "INTEGRACIÓN MULTIMARCA EN AUTOMATIZACIÓN",
-    description: "Expertos en integración de sistemas PLC, SCADA y DCS líderes del mercado.",
+    title: "Servicio de Grúa 24/7hrs",
+    description: "Disponibles día y noche para emergencias o traslados planificados.",
     image: "/Informations-1.webp",
     bgColor: "linear-gradient(180deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.3))",
     textColor: "white",
     descriptors: [
-      "Programación y soporte: Siemens, Schneider, Allen Bradley.",
-      "SCADA: AVEVA, Ignition, FactoryTalk, WinCC.",
-      "Protocolos industriales: Modbus, Profinet, OPC-UA.",
-      "Interoperabilidad entre tecnologías y marcas diversas."
+      "Cobertura regional rápida.",
+      "Equipo capacitado y seguro.",
+      "Para fallas o faenas industriales.",
+      "Coordinación con tu operación."
     ]
   },
   {
-    title: "CAPACITACIÓN Y RELATORÍAS TÉCNICAS",
-    description: "Formamos técnicos y profesionales en automatización y electricidad industrial.",
-    image: "/Informations-2.jpg",
+    title: "Servicio Mecánica DSL/BNC",
+    description: "Reparación y ajuste de motores diésel y BNC con herramientas expertas.",
+    image: "/Informations-2.webp",
     bgColor: "linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.2))",
     textColor: "white",
     descriptors: [
-      "Cursos en PLC, SCADA, IoT y redes industriales.",
-      "Capacitación en normas NFPA 70E y RIC.",
-      "Modelamiento eléctrico BIM MEP aplicado.",
-      "Formación práctica en tecnologías emergentes."
+      "Atención en terreno o taller.",
+      "Técnicos certificados.",
+      "Repuestos de calidad.",
+      "Ideal para maquinaria pesada."
     ]
   },
   {
-    title: "DESARROLLO Y SUPERVISIÓN INDUSTRIAL",
-    description: "Soluciones de digitalización, monitoreo y control de procesos en la nube o local.",
+    title: "Mantenimientos Preventivos",
+    description: "Evita fallos con inspecciones periódicas a equipos eléctricos y mecánicos.",
     image: "/Informations-3.webp",
     bgColor: "linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.2))",
     textColor: "white",
     descriptors: [
-      "Supervisión Web con Node-RED y bases de datos.",
-      "IoT industrial con Siemens IOT2050 y MQTT.",
-      "Implementación en Azure, AWS y OpenCloud.",
-      "SCADA Web, historizadores y analítica en tiempo real."
+      "Limpieza de componentes clave.",
+      "Ajustes normativos.",
+      "Informe técnico claro.",
+      "Planes según uso y riesgo."
+    ]
+  },
+  {
+    title: "Asistencia Remota",
+    description: "Soporte técnico inmediato vía acceso remoto seguro y confiable.",
+    image: "/Informations-4.webp",
+    bgColor: "linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.2))",
+    textColor: "white",
+    descriptors: [
+      "Monitoreo en tiempo real.",
+      "Uso de TeamViewer o AnyDesk.",
+      "Solución sin desplazarse.",
+      "Ideal para zonas remotas."
     ]
   }
 ];
-
 
 
 const Informations = () => {
@@ -74,6 +85,7 @@ const Informations = () => {
   });
   const [hasAnimated, setHasAnimated] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
+  const [loadingVideo, setLoadingVideo] = useState(true);
 
   useEffect(() => {
     if (inView) {
@@ -83,30 +95,112 @@ const Informations = () => {
 
   //ANIMACIÓN DESCRIPTORES
   useEffect(() => {
-    if (swiperInView && swiperInstance && !hasAnimated) {
-      swiperInstance.slideTo(0, 1500); // mueve del último al primero
-      setHasAnimated(true);
+    if (swiperInView && swiperInstance && !hasAnimated && isMobile) {
+      const timeout = setTimeout(() => {
+        swiperInstance.slideTo(0, 1000);
+        setHasAnimated(true);
+      }, 1500);
+
+      return () => clearTimeout(timeout);
     }
-  }, [swiperInView, swiperInstance, hasAnimated]);
+  }, [swiperInView, swiperInstance, hasAnimated, isMobile]);
+
+
+  const irASiguienteSlide = () => {
+    if (swiperInstance) {
+      swiperInstance.slideNext();
+    }
+  };
+
+  const contactarPorWhatsapp = (titulo) => {
+    const mensaje = `Hola, estoy interesado en el servicio: *${titulo}*. ¿Podrías darme más información?`;
+    const telefono = "56922292189";
+    const url = `https://wa.me/${telefono}?text=${encodeURIComponent(mensaje)}`;
+    window.open(url, "_blank");
+  };
 
   return (
     <Box
       sx={{
-        position: "relative", // 🆕 necesario para controlar el zIndex
-        zIndex: 10,            // 🆕 alto para sobresalir
-        backgroundImage: 'url(fondo-blizz.avif)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundAttachment: 'fixed',
-        py: 8,
-        pt: 5,
-        marginTop: "-90px",
-        marginBottom: "-10px",
+        position: "relative",
+        zIndex: 10,
+        height: "auto",
+        py: 0,
+        pt: isMobile ? 10 : 9,
+        marginTop: 0, // 🔧 se baja en escritorio
+        marginBottom: "0px",
         color: "white",
-        borderRadius: isMobile ? '90px' : '120px',
-        overflow: 'hidden',
+        overflow: "hidden", // necesario para que el video no sobresalga
       }}
     >
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
+          zIndex: 0,
+        }}
+      >
+        {loadingVideo && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              zIndex: 2,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0,0,0,0.4)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <CircularProgress size={60} sx={{ color: "#ffffff" }} />
+          </Box>
+        )}
+
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          onLoadedData={() => setLoadingVideo(false)}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: isMobile ? "center bottom" : "center bottom",
+            transform: isMobile ? "scale(1.5) translateY(-15%)" : "scale(1)",
+            transition: "transform 0.3s ease-out",
+            pointerEvents: "none",
+          }}
+          disablePictureInPicture
+          controlsList="nodownload nofullscreen noremoteplayback"
+        >
+          <source
+            src={isMobile ? "reunion-trabajo-movil.mp4" : "reunion-trabajo.mp4"}
+            type="video/mp4"
+          />
+        </video>
+
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.3)", // más opaco aún si deseas
+            zIndex: 1,
+            pointerEvents: "none",
+          }}
+        />
+      </Box>
+
       <Container sx={{ textAlign: "center", color: "white", maxWidth: "1400px !important", }}>
 
         <Box sx={{ position: "relative", textAlign: "center", mb: 2 }}>
@@ -143,7 +237,7 @@ const Informations = () => {
                 height: "100%",
               }}
             >
-              <ElectricalServicesIcon sx={{ color: 'black', fontSize: 24 }} />
+              <EngineeringIcon sx={{ color: 'black', fontSize: 17 }} />
             </motion.div>
           </Box>
 
@@ -179,8 +273,9 @@ const Informations = () => {
                 },
               }}
             >
-              Soluciones en Ingeniería y Automatización
+              {isMobile ? "Servicios" : "Soluciones en Ingeniería y Automatización"}
             </Typography>
+
           </motion.div>
 
           {/* Línea debajo del título con animación (con retraso de 2 segundos) */}
@@ -190,7 +285,7 @@ const Informations = () => {
             transition={{ duration: 0.8, delay: 1 }} // Aparece después de 1s y dura 1s
             style={{
               position: "absolute",
-              top: isMobile ? "calc(80% - 30px)" : "calc(100% - 30px)", // Ajusta la posición
+              top: isMobile ? "calc(80% - 12px)" : "calc(100% - 30px)", // Ajusta la posición
               left: "5%",
               width: "90%", // Mantiene su tamaño desde el inicio
               border: "1px solid white",
@@ -201,313 +296,227 @@ const Informations = () => {
           />
 
         </Box>
-        <Grid container spacing={3} sx={{ mt: 2 }}>
 
-          {/* Columna de los íconos */}
-          <Grid item xs={12} md={6}>
-            {[
-              {
-                icon: <PrecisionManufacturingIcon sx={{ color: "white", fontSize: "2.2rem" }} />,
-                text: "Ingeniería en Automatización",
-                desc: "Integración de PLC, SCADA y sistemas de control.",
-                hideLine: false,
-              },
-              {
-                icon: <InsightsIcon sx={{ color: "white", fontSize: "2.2rem" }} />,
-                text: "Supervisión y Control",
-                desc: "SCADA, historizadores y monitoreo web.",
-                hideLine: false,
-              },
-              {
-                icon: <ElectricalServicesIcon sx={{ color: "white", fontSize: "2.2rem" }} />,
-                text: "Especialidad Eléctrica",
-                desc: "Diseño eléctrico y cumplimiento normativo.",
-                hideLine: false,
-              },
-              {
-                icon: <SchoolIcon sx={{ color: "white", fontSize: "2.2rem" }} />,
-                text: "Capacitación Técnica",
-                desc: "Cursos en PLC, SCADA y redes industriales.",
-                hideLine: true,
-              }
-            ].map((item, index) => {
-              const { ref: itemRef, inView: itemInView } = useInView({
-                threshold: 0.43,
-                triggerOnce: true,
-              });
+        {/* Columna de los descriptores */}
+        <Grid item xs={12} md={6}>
+          <Box ref={swiperRef} sx={{ overflow: "visible", display: isMobile ? "block" : "block", position: "relative", px: 1, pt: 2, pb: 5 }}>
 
-              return (
-                <motion.div
-                  key={`animated-${index}-${animationKey}`} // 👈 clave dinámica
-                  ref={itemRef}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={itemInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{
-                    delay: 0.2 * index,
-                    duration: 0.5,
-                  }}
-                >
-                  <ListItem
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      zIndex: 2,
-                      paddingLeft: isMobile ? "0" : "16px",
-                      paddingRight: isMobile ? "0" : "16px",
-                    }}
-                  >
-                    <ListItemIcon sx={{ zIndex: 2 }}>
-                      <Box
-                        sx={{
-                          position: "relative",
-                          width: 100,
-                          height: 85,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {!item.hideLine && (
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={itemInView ? { height: 40 } : { height: 0 }}
-                            transition={{
-                              delay: 0.2 * index,
-                              duration: 1,
-                              ease: "easeInOut",
-                            }}
-                            style={{
-                              position: "absolute",
-                              top: "80%",
-                              left: "50%",
-                              transform: "translateX(-50%)",
-                              width: "2px",
-                              backgroundImage:
-                                "linear-gradient(white 40%, rgba(255,255,255,0) 0%)",
-                              backgroundPosition: "left",
-                              backgroundSize: "2px 6px",
-                              backgroundRepeat: "repeat-y",
-                              zIndex: 1,
-                            }}
-                          />
-                        )}
-
-                        <Box
-                          sx={{
-                            width: 70,
-                            height: 70,
-                            borderRadius: "50%",
-                            border: "2px solid white",
-                            backgroundColor: "#072138",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            position: "relative",
-                            zIndex: 2,
-                          }}
-                        >
-                          {item.icon}
-                          <motion.div
-                            style={{
-                              position: "absolute",
-                              top: 0,
-                              left: 0,
-                              width: "100%",
-                              height: "100%",
-                              borderRadius: "50%",
-                              backgroundColor: "rgba(255, 255, 255, 0.2)",
-                              zIndex: 1,
-                              animation: "pulsacion 1s ease-in-out 0.1s infinite",
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                    </ListItemIcon>
-
-                    <ListItemText
-                      sx={{
-                        fontFamily: "'Montserrat', Helvetica, Arial, sans-serif !important",
-                        "& .MuiListItemText-primary": {
-                          fontSize: isMobile ? "0.99rem" : "1.2rem",
-                        },
-                        "& .MuiListItemText-secondary": {
-                          color: "white",
-                        },
-                      }}
-                      primary={item.text}
-                      secondary={item.desc}
-                    />
-                  </ListItem>
-                </motion.div>
-              );
-            })}
-          </Grid>
-
-
-
-          {/* Columna de los descriptores */}
-          <Grid item xs={12} md={6}>
-            <Box ref={swiperRef} sx={{ display: isMobile ? "block" : "block", position: "relative", px: 1, pt: 3, pb: 1.5 }}>
+            {!loadingVideo && swiperInView && (
               <Swiper
-                spaceBetween={20}
-                slidesPerView={1.2}
+                spaceBetween={24}
+                slidesPerView={isMobile ? 1.2 : 4.1}
                 onSwiper={setSwiperInstance}
-                initialSlide={promotions.length - 1} // Comienza en el último
+                initialSlide={anuncios.length - 1} // Comienza en el último
                 centeredSlides={false}
                 pagination={{ clickable: true }}
                 onSlideChange={(swiper) => {
                   const index = swiper.activeIndex;
-                  setShowArrow(index !== 2);
+                  setShowArrow(index < 3 && isMobile);
                 }}
               >
-                {promotions.map((promo, index) => (
+                {anuncios.map((anuncio, index) => (
                   <SwiperSlide key={index}>
-                    <Box
-                      sx={{
-                        width: "100%",
-                        height: "360px",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "flex-start",
-                        backgroundImage: `url(${promo.image})`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        borderRadius: "16px",
-                        position: "relative",
-                        overflow: "hidden",
-                        color: "white",
-                        p: 0.5,
-                        cursor: isGrabbing ? 'grabbing' : 'grab', // 👈 cursor de mano abierta y cerrada
-                        transition: 'cursor 0.2s ease'
-                      }}
-                      onPointerDown={() => setIsGrabbing(true)}
-                      onPointerUp={() => setIsGrabbing(false)}
-                      onPointerLeave={() => setIsGrabbing(false)}
+                    <motion.div
+                      initial={!isMobile ? { opacity: 0, x: 100 } : null}
+                      animate={!isMobile ? { opacity: 1, x: 0 } : null}
+                      transition={!isMobile ? { duration: 0.8, delay: 1.6, ease: "easeOut" } : null}
                     >
-
-
                       <Box
                         sx={{
-                          position: "absolute",
-                          top: 0,
-                          left: 0,
                           width: "100%",
-                          height: "100%",
-                          background: "linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0))",
-                          zIndex: 2
-                        }}
-                      />
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center', // centra horizontalmente
-                          justifyContent: 'center', // centra verticalmente si el contenedor lo permite
-                          textAlign: 'center',
-                          mb: 2
+                          height: "420px", // Más largo
+                          display: "flex",
+                          flexDirection: "column",
+                          justifyContent: "space-between", // distribuye arriba y abajo
+                          alignItems: "center",
+                          backgroundImage: `url(${anuncio.image})`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          borderRadius: "16px",
+                          position: "relative",
+                          overflow: "hidden",
+                          color: "white",
+                          p: 0.5,
+                          cursor: isGrabbing ? 'grabbing' : 'grab',
+                          transition: 'cursor 0.2s ease',
                         }}
                         onPointerDown={() => setIsGrabbing(true)}
                         onPointerUp={() => setIsGrabbing(false)}
                         onPointerLeave={() => setIsGrabbing(false)}
                       >
-                        {/* Contenido */}
-                        <Box sx={{ zIndex: 2, textAlign: "center", padding: 0 }}>
-                          <Typography variant="h6" sx={{ mt: 4, fontWeight: "bold", fontSize: "20px", fontFamily: "inherit" }}>
-                            {promo.title}
+                        {/* Capa oscura */}
+                        <Box
+                          sx={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            background: "linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0))",
+                            zIndex: 2
+                          }}
+                        />
+
+                        {/* Contenido textual */}
+                        <Box
+                          sx={{
+                            zIndex: 3,
+                            px: 2,
+                            pt: 3,
+                            flexGrow: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "flex-start",
+                            textAlign: "center",
+                          }}
+                        >
+                          <Typography variant="h6" sx={{ fontWeight: "bold", fontSize: "20px", mb: 1 }}>
+                            {anuncio.title}
                           </Typography>
                           <Typography
                             variant="body2"
                             sx={{
-                              fontSize: {
-                                xs: '0.85rem',
-                                sm: '0.95rem'
-                              },
+                              fontSize: { xs: '0.85rem', sm: '0.95rem' },
                               maxWidth: 400,
-                              color: 'white'
+                              mb: 1,
                             }}
                           >
-                            {promo.description}
+                            {anuncio.description}
                           </Typography>
 
-                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.2, mt: 1, ml: 0 }}>
-                            {promo.descriptors?.map((text, index) => (
-                              <Box key={index} sx={{ display: 'flex', alignItems: 'center' }}>
-                                <Box
-                                  sx={{
-                                    width: 16,
-                                    height: 16,
-                                    borderRadius: '50%',
-                                    bgcolor: 'black',
-                                    color: 'white',
-                                    fontSize: 10,
-                                    fontWeight: 'bold',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    mr: 0.5
-                                  }}
-                                >
-                                  {index + 1}
+                          <Box
+                            sx={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 1.2,
+                              mt: 1
+                            }}
+                          >
+                            {anuncio.descriptors?.map((text, index) => (
+                              <motion.div
+                                key={index}
+                                initial={{ opacity: 0, x: 10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: index * 0.2, duration: 0.5 }}
+                              >
+                                <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                                  <Box
+                                    sx={{
+                                      minWidth: 22,
+                                      height: 22,
+                                      borderRadius: '50%',
+                                      bgcolor: '#ffb905',
+                                      color: 'black',
+                                      fontSize: '0.75rem',
+                                      fontWeight: 'bold',
+                                      display: 'flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      boxShadow: '0px 2px 5px rgba(0,0,0,0.2)',
+                                      mr: 1
+                                    }}
+                                  >
+                                    {index + 1}
+                                  </Box>
+                                  <Typography
+                                    variant="body2"
+                                    sx={{
+                                      fontSize: '0.85rem',
+                                      lineHeight: 1.4,
+                                      color: 'white',
+                                      textAlign: 'left'
+                                    }}
+                                  >
+                                    {text}
+                                  </Typography>
                                 </Box>
-                                <Typography variant="caption" sx={{ fontSize: '0.82rem', color: 'white', textAlign: 'left' }}>
-                                  {text}
-                                </Typography>
-                              </Box>
+                              </motion.div>
                             ))}
                           </Box>
+
                         </Box>
+
+                        {/* Botón Contactar */}
+                        <Box sx={{ zIndex: 3, mb: 2, width: "100%", display: "flex", justifyContent: "center" }}>
+                          <Button
+                            variant="contained"
+                            size="medium"
+                            onClick={() => contactarPorWhatsapp(anuncio.title)}
+                            sx={{
+                              px: 4,
+                              py: 1.2,
+                              width: "80%",
+                              maxWidth: 320,
+                              backgroundColor: "#ffb905",
+                              color: "#000",
+                              fontWeight: "bold",
+                              borderRadius: "30px",
+                              textTransform: "none",
+                              fontSize: "1rem",
+                              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+                              transition: "all 0.3s ease-in-out",
+                              "&:hover": {
+                                backgroundColor: "#e6a800",
+                                transform: "scale(1.05)",
+                                boxShadow: "0px 6px 18px rgba(0, 0, 0, 0.3)"
+                              },
+                              "&:active": {
+                                transform: "scale(0.98)",
+                                boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.2)"
+                              }
+                            }}
+                          >
+                            Contactar
+                          </Button>
+                        </Box>
+
                       </Box>
-                    </Box>
+                    </motion.div>
                   </SwiperSlide>
                 ))}
               </Swiper>
-
-              {showArrow && (
-                <motion.div
-                  animate={{
-                    x: [0, 5, 0], // Flota hacia la derecha y vuelve
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: 2,
-                    ease: "easeInOut",
-                  }}
-                  style={{
-                    position: "absolute",
-                    top: -12,
-                    right: 10,
-                    zIndex: 10,
+            )}
+            {showArrow && (
+              <motion.div
+                animate={{
+                  x: [0, 5, 0], // Flota hacia la derecha y vuelve
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                style={{
+                  position: "absolute",
+                  top: -12,
+                  right: isMobile ? 10 : 37,
+                  zIndex: 10,
+                }}
+              >
+                <IconButton
+                  onClick={irASiguienteSlide}
+                  sx={{
+                    color: "white",
+                    transition: "opacity 0.3s ease-in-out",
+                    backgroundColor: "transparent",
+                    boxShadow: "none",
+                    padding: 0,
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                    },
                   }}
                 >
-                  <IconButton
-                    sx={{
-                      color: "white",
-                      transition: "opacity 0.3s ease-in-out",
-                      backgroundColor: "transparent",
-                      boxShadow: "none",
-                      padding: 0,
-                      "&:hover": {
-                        backgroundColor: "transparent",
-                      },
-                    }}
-                  >
-                    <ArrowForwardIcon fontSize="large" sx={{ fontSize: "23px" }} />
-                  </IconButton>
-                </motion.div>
-              )}
-            </Box>
-          </Grid>
+                  <ArrowForwardIcon fontSize="large" sx={{ fontSize: "23px" }} />
+                </IconButton>
+              </motion.div>
+            )}
 
-
-
-
+          </Box>
         </Grid>
 
-
-
       </Container>
-    </Box>
+    </Box >
   );
 };
 

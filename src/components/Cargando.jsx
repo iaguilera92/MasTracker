@@ -8,8 +8,7 @@ const Cargando = () => {
     const [showElectricEffect, setShowElectricEffect] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-    const NUM_COLUMNS = isMobile ? 10 : 16;
-    const COLUMN_WIDTH_PX = isMobile ? 50 : undefined;
+    const NUM_ROWS = isMobile ? 10 : 16;
     const [showImage, setShowImage] = useState(false);
     const [showStrips, setShowStrips] = useState(true);
 
@@ -43,6 +42,7 @@ const Cargando = () => {
     }, []);
 
 
+
     return (
         <Box
             sx={{
@@ -66,33 +66,33 @@ const Cargando = () => {
                         position: 'absolute',
                         inset: 0,
                         display: 'flex',
+                        flexDirection: 'column',
                         zIndex: 1, // correcto
                     }}
                 >
 
-                    {Array.from({ length: NUM_COLUMNS }).map((_, index) => (
+                    {Array.from({ length: NUM_ROWS }).map((_, index) => (
                         <motion.div
                             key={index}
-                            initial={{ translateY: index % 2 === 0 ? '-100%' : '100%' }}
-                            animate={{ translateY: '0%' }}
+                            initial={{ scaleX: 0 }}
+                            animate={{ scaleX: 1 }}
                             transition={{
                                 duration: 0.8,
-                                delay: index * 0,
+                                delay: index * 0.05, // Efecto en cascada
                                 ease: 'easeInOut',
                             }}
                             style={{
-                                flex: isMobile ? '0 0 auto' : '1',
-                                width: isMobile ? `${COLUMN_WIDTH_PX}px` : 'auto',
-                                height: '100%',
+                                width: '100%',
+                                height: `${100 / NUM_ROWS}%`, // Altura proporcional
                                 backgroundColor: 'rgb(0 7 41)',
                                 margin: 0,
                                 padding: 0,
                                 border: 'none',
-                                boxSizing: 'border-box',
-                                position: 'relative',
-                                zIndex: 0,
-                                transformOrigin: 'left center',
+                                boxShadow: 'none',
                                 backfaceVisibility: 'hidden',
+                                transform: 'translateZ(0)',
+                                willChange: 'transform',
+                                transformOrigin: index % 2 === 0 ? 'right center' : 'left center', // Alternancia
                             }}
                         />
                     ))}

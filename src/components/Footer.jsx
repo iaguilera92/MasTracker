@@ -98,7 +98,7 @@ const Footer = () => {
 
   const handleClick = (event) => {
     setOpenAlert(true);
-    navigate("/administracion"); // Redirige a /administracion
+    navigate("/login"); // Redirige a /administracion
   };
   // Animaciones al hacer scroll
   const { ref: logoRef, inView: logoInView } = useInView({ triggerOnce: true, threshold: 0.1 });
@@ -112,9 +112,9 @@ const Footer = () => {
         backgroundColor: "rgba(23, 24, 25, 0.97)",
         padding: "20px 0",
         color: "white",
-        backgroundImage: "url(/fondo-footer.webp)",
+        backgroundImage: "url(/footer-fondo.webp)",
         backgroundSize: "cover",
-        backgroundPosition: "center",
+        backgroundPosition: isMobile ? "top center" : "center bottom",
         "@media (max-width: 600px)": {
           padding: "10px 0",
         },
@@ -246,7 +246,7 @@ const Footer = () => {
                 }}
               >
                 <AdminPanelSettingsIcon fontSize="small" />
-                <Link href="administracion" color="inherit" onClick={handleClick}>
+                <Link href="login" color="inherit" onClick={handleClick}>
                   Administración
                 </Link>
 
@@ -267,7 +267,7 @@ const Footer = () => {
 
         {/* 🔹 Diseño para Móviles */}
         {isMobile && (
-          <Box display="flex" flexDirection="column" alignItems="center" mb={7}>
+          <Box display="flex" flexDirection="column" alignItems="center" mb={3}>
             <Box ref={logoRef} sx={{ animation: logoInView ? `${growElement} 1s forwards` : "none" }}>
               <img src="/logo-masautomatizacion-white.png" alt="Logo" style={{ height: "65px", marginBottom: "15px", marginTop: "15px", marginRight: "40px" }} />
             </Box>
@@ -286,52 +286,14 @@ const Footer = () => {
               <SocialButton href="https://www.facebook.com/profile.php?id=100063452866880" Icon={FacebookIcon} bgColor="linear-gradient(45deg, #00B5F5, #002A8F)" isMobile={isMobile} />
               <SocialButton href="https://www.linkedin.com/in/mat%C3%ADas-andr%C3%A9s-aguilera-salinas-399b81123?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app" Icon={LinkedInIcon} bgColor="linear-gradient(45deg, #00B5F5, #0077b7)" isMobile={isMobile} />
             </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "left",
-                gap: 0.5, // menor separación entre imagen y texto
-              }}
-            >
-              <img
-                src="area-clientes.png"
-                width={120}
-                alt="Área Clientes"
-                style={{ marginTop: 30, marginRight: 30, marginBottom: "20px" }} // Ajusta el valor según necesites
-              />
-
-              <Typography
-                ml={"10px"}
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0,
-                }}
-              >
-                <AdminPanelSettingsIcon fontSize="small" />
-                <Link href="administracion" color="inherit" onClick={handleClick}>
-                  Administración
-                </Link>
-              </Typography>
-              <Typography
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 0.5,
-                }}
-              >
-              </Typography>
-            </Box>
           </Box>
 
         )}
 
-        <Typography variant="body2" align="center" mt={2} sx={{ marginTop: "5vh", fontSize: "15px" }}>
-          @masautomatizacion.cl 2025 Todos los derechos reservados
+        <Typography variant="body2" align="center" mt={2} sx={{ marginTop: "0", fontSize: "15px" }}>
+          @mastracker.cl 2025 Todos los derechos reservados
         </Typography>
-        <Typography variant="body2" align="center" mt={2} sx={{ marginTop: "1vh", cursor: "pointer" }} onClick={() => window.open("http://plataformas-web.cl", "_blank")}>
+        <Typography variant="body2" align="center" mt={2} sx={{ marginTop: "0", cursor: "pointer" }} onClick={() => window.open("http://plataformas-web.cl", "_blank")}>
           Diseñado por plataformas-web.cl
         </Typography>
 

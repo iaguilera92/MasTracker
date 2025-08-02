@@ -4,10 +4,7 @@ import theme from "./theme";
 import { ThemeProvider } from "@mui/material/styles";
 import "@fontsource/poppins";
 import { lazy, Suspense } from "react";
-const Areas = lazy(() => import("./components/Areas"));
 const Informations = lazy(() => import("./components/Informations"));
-const Contacto = lazy(() => import("./components/Contacto"));
-const Evidencias = lazy(() => import("./components/Evidencias"));
 const Footer = lazy(() => import("./components/Footer"));
 const Navbar = lazy(() => import("./components/Navbar"));
 
@@ -89,7 +86,8 @@ function App() {
 
   // ⏳ CARGANDO CON LÓGICA CORRECTA
   useEffect(() => {
-    // Solo redirigir desde "/", "/inicio", o ""
+    const isAuthenticated = sessionStorage.getItem("credenciales") !== null;
+
     if (!["/", "/inicio", "", "/login"].includes(location.pathname)) {
       setShowApp(true);
       return;
@@ -101,13 +99,13 @@ function App() {
       minListo = true;
       if (!videoReady) {
         setShowApp(true);
-        navigate("/login");
+        if (!isAuthenticated) navigate("/login"); // ✅ solo si no estás autenticado
       }
     }, 1500);
 
     const maxTimeout = setTimeout(() => {
       setShowApp(true);
-      navigate("/login");
+      if (!isAuthenticated) navigate("/login"); // ✅ solo si no estás autenticado
     }, 4000);
 
     return () => {
@@ -116,23 +114,6 @@ function App() {
     };
   }, [videoReady, location.pathname, navigate]);
 
-  useEffect(() => {
-    const body = document.body;
-    const html = document.documentElement;
-
-    if (!showApp) {
-      body.classList.add('no-scroll');
-      html.classList.add('no-scroll');
-    } else {
-      body.classList.remove('no-scroll');
-      html.classList.remove('no-scroll');
-    }
-
-    return () => {
-      body.classList.remove('no-scroll');
-      html.classList.remove('no-scroll');
-    };
-  }, [showApp]);
 
 
 
@@ -254,27 +235,13 @@ function App() {
         {["/", ""].includes(location.pathname) && (
           <>
             <Suspense fallback={null}>
-              <Box id="areas-section">
-                <Areas />
-              </Box>
-            </Suspense>
-
-            <Suspense fallback={null}>
               <div ref={informationsRef}>
                 <Informations />
               </div>
             </Suspense>
-            <Suspense fallback={null}>
-              <Evidencias />
-            </Suspense>
-
-            <Suspense fallback={null}>
-              <Box ref={contactoRef}>
-                <Contacto />
-              </Box>
-            </Suspense>
           </>
         )}
+
 
         {/* Footer (excepto en administración) */}
         {location.pathname !== "/login" && location.pathname !== "/dashboard" && location.pathname !== "/configurar-servicios" && <Footer />}

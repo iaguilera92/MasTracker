@@ -13,6 +13,8 @@ const Home = lazy(() => import("./components/Home"));
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const ConfigurarServicios = lazy(() => import("./components/configuraciones/ConfigurarServicios"));
 const Alarmas = lazy(() => import("./components/configuraciones/Alarmas"));
+const Eventos = lazy(() => import("./components/configuraciones/Eventos"));
+const Flotas = lazy(() => import("./components/configuraciones/Flotas"));
 
 // ✅ Función para proteger rutas con autenticación
 const isAuthenticated = () => {
@@ -31,24 +33,6 @@ const withSuspense = (Component) => (
     </Suspense>
 );
 
-// 👇 Wrapper para pasar los refs desde el contexto de App
-function HomeWrapper() {
-    const { contactoRef, informationsRef, setVideoReady } = useOutletContext();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        const creds = sessionStorage.getItem("credenciales");
-        if (creds) {
-            navigate("/login", { replace: true });
-        }
-    }, [navigate]);
-
-    return (
-        <Suspense fallback={null}>
-            <Home contactoRef={contactoRef} informationsRef={informationsRef} setVideoReady={setVideoReady} />
-        </Suspense>
-    );
-}
 
 const router = createBrowserRouter(
     [
@@ -58,14 +42,15 @@ const router = createBrowserRouter(
             children: [
                 {
                     path: "",
-                    element: isAuthenticated()
-                        ? <Navigate to="/dashboard" replace />
-                        : <HomeWrapper />
+                    element: withSuspense(Home)
                 },
                 { path: "servicios", element: withSuspense(Servicios) },
                 { path: "nosotros", element: withSuspense(Nosotros) },
                 { path: "contacto", element: withSuspense(Contacto) },
-                { path: "login", element: withSuspense(Administracion) },
+                {
+                    path: "login",
+                    element: withSuspense(Administracion)
+                },
                 { path: "dashboard", element: withSuspense(Dashboard) },
                 {
                     path: "configurar-servicios",
@@ -80,6 +65,22 @@ const router = createBrowserRouter(
                     element: (
                         <ProtectedRoute>
                             {withSuspense(Alarmas)}
+                        </ProtectedRoute>
+                    ),
+                },
+                {
+                    path: "eventos",
+                    element: (
+                        <ProtectedRoute>
+                            {withSuspense(Eventos)}
+                        </ProtectedRoute>
+                    ),
+                },
+                {
+                    path: "flotas",
+                    element: (
+                        <ProtectedRoute>
+                            {withSuspense(Flotas)}
                         </ProtectedRoute>
                     ),
                 },

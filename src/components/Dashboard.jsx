@@ -10,8 +10,6 @@ import {
 import { useInView } from "react-intersection-observer";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import MenuInferior from './configuraciones/MenuInferior';
 import { MapContainer, TileLayer, Marker, useMapEvent } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -111,53 +109,39 @@ const Dashboard = () => {
     return (
         <Box
             sx={{
-                height: isMobile ? "100dvh" : "100vh",
-                width: "100vw",
+                width: "100%",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                backgroundImage: 'url(fondo-blizz.avif)',
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
                 overflow: "hidden",
             }}
         >
-
             <Grid
-                container
-                spacing={1.5}
+
                 justifyContent="top"
                 alignItems="center"
-                direction="column"
-                sx={{ width: "100%", flexGrow: 1, pt: isMobile ? 12 : 12 }}
+                sx={{ width: "100%", flexGrow: 1, pt: isMobile ? 0 : 0 }}
             >
                 {/* CONTENIDO PRINCIPAL */}
                 <Grid item>
                     <Paper
                         elevation={4}
                         sx={{
-                            width: "90vw",
+                            width: "100%",
                             backgroundColor: "white",
                             p: isMobile ? 1 : 2,
                             borderRadius: 3,
                             display: "flex",
                             flexDirection: "column",
-                            gap: isMobile ? 1 : 2,
+                            gap: 0,
                             mt: 0,
                             maxHeight: isMobile ? "78vh" : "auto", // altura límite en mobile
                             overflowY: isMobile ? "auto" : "visible", // scroll interno en mobile
                         }}
                     >
-
-                        <Grid container justifyContent="space-between" alignItems="center">
-                            <Typography variant="h6" fontWeight="bold">
-                                {nombre}
-                            </Typography>
-                            <Typography variant="body2" sx={{ color: "gray", fontStyle: "italic" }}>
-                                ⏱ Hace un minuto
-                            </Typography>
-                        </Grid>
 
                         <MapContainer
                             preferCanvas
@@ -196,7 +180,11 @@ const Dashboard = () => {
                             />
 
                         </MapContainer>
-
+                        <Grid container justifyContent="space-between" alignItems="center">
+                            <Typography variant="body2" sx={{ color: "gray", fontStyle: "italic" }}>
+                                OBDII ⏱ Hace un minuto
+                            </Typography>
+                        </Grid>
                         <Grid container spacing={1}>
                             {[
                                 {

@@ -159,7 +159,7 @@ const SocialButton = ({ href, Icon, bgColor, hoverStyles }) => (
 const menuItems = [
   { name: "INICIO", icon: <HomeIcon /> },
   { name: "FLOTA", icon: <DirectionsCarIcon /> },
-  { name: "OBDII", icon: <SettingsInputComponentIcon /> },
+  //{ name: "OBDII", icon: <SettingsInputComponentIcon /> },
   //{ name: "DATACORE", icon: <StorageIcon /> },
   { name: "EVENTOS", icon: <EventIcon /> },
   { name: "ALARMAS", icon: <NotificationsActiveIcon /> },
@@ -194,7 +194,7 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
       if (!mostrarAnimacion && !animacionMostrada) {
         setAnimacionMostrada(true); // Forzar SIEMPRE a los 5s
       }
-    }, 5000);
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -220,9 +220,7 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
     setOpen(false);
 
     const enConstruccion = [
-      "OBDII",
       "DATACORE",
-      "EVENTOS",
       "CONFIGURACIÓN",
     ];
 
@@ -236,7 +234,13 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
 
     const actions = {
       INICIO: () => (location.pathname !== "/" ? navigate("/") : scrollToTop()),
-      FLOTA: () => (location.pathname == "/dashboard" ? navigate("/dashboard") : scrollToTop()),
+      FLOTA: () => {
+        if (location.pathname !== "/flotas") {
+          navigate("/flotas");
+        } else {
+          scrollToTop();
+        }
+      },
       ALARMAS: () => {
         if (location.pathname !== "/alarmas") {
           navigate("/alarmas");
@@ -244,6 +248,13 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
           scrollToTop();
         }
       },
+      EVENTOS: () => {
+        if (location.pathname !== "/eventos") {
+          navigate("/eventos");
+        } else {
+          scrollToTop();
+        }
+      }
     };
 
     actions[item.name]?.();
