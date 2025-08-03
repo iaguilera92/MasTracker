@@ -27,8 +27,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import HomeIcon from "@mui/icons-material/Home";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import SettingsInputComponentIcon from "@mui/icons-material/SettingsInputComponent";
-import StorageIcon from "@mui/icons-material/Storage";
+import LogoutIcon from '@mui/icons-material/Logout';
 import EventIcon from "@mui/icons-material/Event";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -260,7 +259,14 @@ const Navbar = ({ contactoRef, informationsRef, videoReady }) => {
 
     actions[item.name]?.();
   };
+  const handleLogout = () => {
+    // Limpia datos si es necesario
+    localStorage.clear();
+    sessionStorage.clear();
 
+    // Redirige al login (o página raíz)
+    navigate("/login");
+  };
 
   return (
     <>
@@ -479,9 +485,9 @@ const Navbar = ({ contactoRef, informationsRef, videoReady }) => {
       `,
                     borderRadius: 3,
                     px: 2,
-                    py: 1,
+                    py: 0.5,
                     mx: 2,
-                    mb: 1,
+                    mb: 0.5,
                     color: "#ffffff",
                     backdropFilter: "blur(8px)",
                     border: "1px solid rgba(255,255,255,0.1)",
@@ -494,11 +500,11 @@ const Navbar = ({ contactoRef, informationsRef, videoReady }) => {
                       src="/logo-mastracker-white-1.png"
                       alt="Bienvenidos"
                       sx={{
-                        width: 65,
+                        width: 47,
                         height: 45,
                         objectFit: "contain",
                         borderRadius: 2,
-                        mr: 1,
+                        mr: 0.8,
                       }}
                     />
                     <Typography
@@ -518,7 +524,7 @@ const Navbar = ({ contactoRef, informationsRef, videoReady }) => {
                     sx={{
                       opacity: 0.85,
                       fontSize: "0.85rem",
-                      mb: 1.1,
+                      mb: 0.5,
                       fontFamily: 'Poppins, sans-serif',
                     }}
                   >
@@ -641,6 +647,35 @@ const Navbar = ({ contactoRef, informationsRef, videoReady }) => {
             )}
           </AnimatePresence>
         </Box>
+        <Box
+          sx={{
+            borderTop: "1px solid rgba(255,255,255,0.1)",
+            px: 2,
+            py: 1.2,
+            display: "flex",
+            justifyContent: "center",
+            backgroundColor: "rgba(255,255,255,0.02)",
+          }}
+        >
+          <Button
+            onClick={handleLogout}
+            sx={{
+              color: "#ff8a65",
+              fontWeight: 600,
+              fontSize: "0.9rem",
+              textTransform: "none",
+              fontFamily: "Poppins, sans-serif",
+              "&:hover": {
+                color: "#ffffff",
+                backgroundColor: "rgba(255,138,101,0.1)",
+              },
+            }}
+            startIcon={<LogoutIcon sx={{ color: "#ff8a65" }} />}
+          >
+            Cerrar sesión
+          </Button>
+        </Box>
+
       </Drawer >
       {/* PDF */}
       <Dialog

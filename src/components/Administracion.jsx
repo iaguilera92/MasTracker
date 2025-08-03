@@ -34,11 +34,10 @@ const Administracion = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const usuarioValido = await validarCredenciales(email, password);
+    const usuarioValido = await validarCredenciales(email, password); // ✅ falta esto
 
     if (usuarioValido) {
       sessionStorage.setItem("credenciales", JSON.stringify({ email, password }));
-
       if (recordarme) {
         localStorage.setItem("credenciales", JSON.stringify({ email, password }));
       } else {
@@ -52,15 +51,19 @@ const Administracion = () => {
       }));
       sessionStorage.setItem("usuario", JSON.stringify(usuarioValido));
 
-      // ⏳ Espera antes de navegar para que se vea el loader
-      setTimeout(() => {
-        navigate("/home", { replace: true });
-      }, 1300);
+      // ✅ Dejamos un frame libre antes de navegar
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          navigate("/home", { replace: true });
+        }, 1300);
+      });
+
     } else {
       setSnackbar({ open: true, type: "error", message: "Usuario o contraseña incorrectos" });
       setIsSubmitting(false);
     }
   };
+
 
 
   // Efecto para ocultar snackbar
@@ -113,7 +116,7 @@ const Administracion = () => {
     }}>
       <Paper elevation={3} sx={{
         backgroundColor: "rgba(0,0,0,0.6)", color: "white", p: 4, borderRadius: 3,
-        maxWidth: 350, width: "90%", textAlign: "center", mt: isMobile ? -2 : 0
+        maxWidth: 350, width: "90%", textAlign: "center", mt: isMobile ? -6 : 0
       }}>
         <Box component="img" src="/logo-mastracker-white-1.png" alt="Usuario" sx={{
           width: 80, height: 80, borderRadius: "50%", objectFit: "cover",
@@ -162,13 +165,15 @@ const Administracion = () => {
               disabled={isSubmitting}
               sx={{
                 mt: 2,
-                color: "white",
-                borderColor: "white",
                 height: 45,
                 position: "relative",
+                color: isSubmitting ? "#fff" : "white",
+                backgroundColor: isSubmitting ? "#E95420" : "transparent",
+                borderColor: isSubmitting ? "#E95420" : "white",
+                transition: "all 0.3s ease-in-out",
                 "&:hover": {
                   borderColor: "#E95420",
-                  backgroundColor: "#E95420"
+                  backgroundColor: "#E95420",
                 },
                 "&.Mui-disabled": {
                   borderColor: "#888",
@@ -177,11 +182,12 @@ const Administracion = () => {
               }}
             >
               {isSubmitting ? (
-                <CircularProgress size={22} sx={{ color: "#E95420" }} />
+                <CircularProgress size={22} sx={{ color: "#fff" }} />
               ) : (
                 "Entrar"
               )}
             </Button>
+
           </motion.div>
 
         </Box>
