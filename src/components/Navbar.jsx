@@ -167,7 +167,7 @@ const menuItems = [
 ];
 
 
-function Navbar({ contactoRef, informationsRef, videoReady }) {
+const Navbar = ({ contactoRef, informationsRef, videoReady }) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -200,15 +200,16 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
 
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+    const target = window;
+    const handleScroll = () => setIsScrolled(target.scrollTop > 50 || window.scrollY > 50);
 
+    target.addEventListener("scroll", handleScroll);
+    return () => target.removeEventListener("scroll", handleScroll);
+  }, []);
+  const handleScroll = () => {
+    console.log("scroll!", window.scrollY);
+    setIsScrolled(window.scrollY > 50);
+  };
   const scrollToRef = (ref, offset = -80) => {
     if (ref?.current) {
       const y = ref.current.getBoundingClientRect().top + window.scrollY + offset;
@@ -278,10 +279,9 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
         <AppBar
           position="relative"
           sx={{
-            backgroundColor: isScrolled ? "rgba(0,0,0,0.8)" : "transparent",
-            backdropFilter: isScrolled ? "blur(10px)" : "none",
+            backgroundColor: "rgba(0,0,0,0.85)",
+            backdropFilter: "blur(10px)",
             boxShadow: "none",
-            transition: "all 0.3s ease",
             borderRadius: "50px",
             overflow: "hidden",
           }}
@@ -315,10 +315,10 @@ function Navbar({ contactoRef, informationsRef, videoReady }) {
                         alt="Logo"
                         onClick={LogoInicio}
                         initial={{ scale: 1 }}
-                        animate={{ scale: isScrolled ? 0.8 : 1 }}
+                        animate={{ scale: 1 }}
                         exit={{ opacity: 0 }} // ✅
                         transition={{ duration: 0.3, ease: "easeOut" }}
-                        style={{ height: "55px", marginTop: "10px", cursor: "pointer" }}
+                        style={{ height: "40px", marginTop: "10px", cursor: "pointer" }}
                         onError={(e) => {
                           e.target.onerror = null;
                           e.target.src = "/fallback-logo.png"; // 👈 puedes usar un logo alternativo

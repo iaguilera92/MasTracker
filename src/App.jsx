@@ -28,7 +28,7 @@ function App() {
   const informationsRef = useRef(null); // ✅ AÑADE AQUÍ EL REF PARA SCROLL
   const location = useLocation();
   const [videoReady, setVideoReady] = useState(false);
-  const isHome = ["/", "/inicio", ""].includes(location.pathname);
+  const isHome = ["/", "/inicio", "/home", ""].includes(location.pathname);
   const isCompletelyReady = !isLoading && (isHome ? videoReady : true);
   const [showApp, setShowApp] = useState(false);
   const [snackbarVersion, setSnackbarVersion] = useState({ open: false, version: "", });
@@ -41,7 +41,7 @@ function App() {
         const rect = areasSection.getBoundingClientRect();
         setShowContacto(rect.top < window.innerHeight * 0.5);
       }
-      setShowArrow(window.scrollY > 300);
+      setShowArrow(window.scrollY > 100);
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -156,6 +156,14 @@ function App() {
       );
   }, []);
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }, 50); // le damos un pequeño delay
+
+    return () => clearTimeout(timeout);
+  }, [location.pathname]);
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -220,28 +228,51 @@ function App() {
 
 
       {/* Contenido principal, oculto mientras se carga */}
-      <Box sx={{ visibility: showApp ? "visible" : "hidden", pointerEvents: showApp ? "auto" : "none", overflowX: 'hidden', }}      >
-        {/* Navbar solo si no estás en /administracion */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          height: "100vh",           // altura total
+          overflow: "hidden",        // evita scroll en toda la app
+          visibility: showApp ? "visible" : "hidden",
+          pointerEvents: showApp ? "auto" : "none",
+        }}
+      >
+        {/* Navbar */}
         {location.pathname !== "/login" && (
           <Suspense fallback={null}>
-            <Navbar contactoRef={contactoRef} informationsRef={informationsRef} videoReady={videoReady} />
+            <Navbar
+              contactoRef={contactoRef}
+              informationsRef={informationsRef}
+              videoReady={videoReady}
+            />
           </Suspense>
         )}
 
-        {/* Rutas principales con contexto */}
-        <Outlet context={{ showApp, contactoRef, informationsRef }} />
-
-        {/* Secciones visibles solo en la página de inicio */}
-        {["/", ""].includes(location.pathname) && (
-          <>
+        {/* CONTENIDO CENTRAL */}
+        <Box
+          sx={{
+            flex: 1,               // crece hasta ocupar espacio restante
+            overflowY: "auto",     // scroll si es necesario
+            overflowX: "hidden",   // evita scroll horizontal
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Outlet context={{ showApp, contactoRef, informationsRef }} />
+          {isHome && (
             <Suspense fallback={null}>
-              <div ref={informationsRef}>
-                <Informations />
-              </div>
+              <Informations />
             </Suspense>
-          </>
-        )}
+          )}
+        </Box>
 
+        {/* FOOTER */}
+        {!["/login", "/dashboard", "/configurar-servicios"].includes(location.pathname) && (
+          <Suspense fallback={null}>
+            <Footer />
+          </Suspense>
+        )}
         {/* Botón WhatsApp */}
         {location.pathname !== "/login" && location.pathname !== "/dashboard" && location.pathname !== "/configurar-servicios" && (
           <Box

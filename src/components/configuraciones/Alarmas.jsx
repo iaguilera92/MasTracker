@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   Box, Container, Snackbar, Alert, Typography, Table, TableBody,
   TableCell, TableContainer, TableHead, TableRow, Paper, useTheme, useMediaQuery
@@ -57,6 +57,11 @@ const Alarmas = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const MotionTableRow = motion(TableRow);
   const MotionTableContainer = motion(TableContainer);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
     <Container
       maxWidth={false}

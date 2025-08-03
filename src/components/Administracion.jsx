@@ -54,7 +54,7 @@ const Administracion = () => {
 
       // ⏳ Espera antes de navegar para que se vea el loader
       setTimeout(() => {
-        navigate("/", { replace: true });
+        navigate("/home", { replace: true });
       }, 1300);
     } else {
       setSnackbar({ open: true, type: "error", message: "Usuario o contraseña incorrectos" });

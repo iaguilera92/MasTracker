@@ -43,7 +43,7 @@ const Flotas = () => {
       maxWidth={false}
       disableGutters
       sx={{
-        minHeight: '100vh',
+        minHeight: '100%',
         width: '100vw',
         backgroundImage: 'url(fondo-blizz.avif)',
         backgroundSize: 'cover',
@@ -51,6 +51,7 @@ const Flotas = () => {
         backgroundAttachment: 'fixed',
         backgroundPosition: 'center',
         py: 12,
+        pb: 0,
         px: isMobile ? 3 : 6,
       }}
     >

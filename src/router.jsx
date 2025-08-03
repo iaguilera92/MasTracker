@@ -9,11 +9,11 @@ const Servicios = lazy(() => import("./components/Servicios"));
 const Nosotros = lazy(() => import("./components/Nosotros"));
 const Contacto = lazy(() => import("./components/Contacto"));
 const Administracion = lazy(() => import("./components/Administracion"));
-const Home = lazy(() => import("./components/Home"));
 const Dashboard = lazy(() => import("./components/Dashboard"));
 const ConfigurarServicios = lazy(() => import("./components/configuraciones/ConfigurarServicios"));
 const Alarmas = lazy(() => import("./components/configuraciones/Alarmas"));
 const Eventos = lazy(() => import("./components/configuraciones/Eventos"));
+const Flota = lazy(() => import("./components/configuraciones/Flota"));
 const Flotas = lazy(() =>
     import("./components/configuraciones/Flotas").catch((err) => {
         console.warn("Fallo al cargar Flotas, recargando...", err);
@@ -21,7 +21,7 @@ const Flotas = lazy(() =>
         return new Promise(() => { }); // evita renderización
     })
 );
-const Flota = lazy(() => import("./components/configuraciones/Flota"));
+const Home = lazy(() => import("./components/Home")); // ✅ Agregar esto
 
 // ✅ Función para proteger rutas con autenticación
 const isAuthenticated = () => {
@@ -49,8 +49,9 @@ const router = createBrowserRouter(
             children: [
                 {
                     path: "",
-                    element: withSuspense(Home)
+                    element: <Navigate to="/home" replace />
                 },
+                { path: "home", element: withSuspense(Home) },
                 { path: "servicios", element: withSuspense(Servicios) },
                 { path: "nosotros", element: withSuspense(Nosotros) },
                 { path: "contacto", element: withSuspense(Contacto) },
@@ -100,7 +101,7 @@ const router = createBrowserRouter(
                     ),
                 },
             ],
-        },
+        }
     ],
     {
         future: {

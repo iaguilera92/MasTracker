@@ -115,6 +115,7 @@ const Informations = () => {
     }
   }, [inView]);
 
+
   return (
     <Box
       sx={{
@@ -163,9 +164,7 @@ const Informations = () => {
 
 
       <Container sx={{ textAlign: "center", color: "white", maxWidth: "1400px !important", }}>
-
-        <Box ref={ref} sx={{ position: "relative", textAlign: "center", mb: 2, mt: 6 }}>
-
+        <Box ref={ref} sx={{ position: "relative", textAlign: "center", mb: 2, mt: 4 }}>
 
           <motion.div
             initial={{ opacity: 0, y: 30 }}
