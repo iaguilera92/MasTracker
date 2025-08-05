@@ -10,3 +10,7 @@ Currently, two official plugins are available:
 
 Password Example (Comando Git): node hashea.js admin 1234
 Shift + Alt + F (Ordenar Código)
+
+API NETLIFY: npx netlify functions:serve getAnalyticsStats
+
+CORRER SERVICIOS: npx netlify dev

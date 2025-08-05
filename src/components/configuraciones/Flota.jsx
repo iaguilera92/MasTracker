@@ -3,7 +3,7 @@ import {
   Box, Typography, Grid, Card, CardContent, Snackbar, Button, Alert, useTheme, useMediaQuery, Container, Collapse
 } from '@mui/material';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-
+import RestoreIcon from '@mui/icons-material/Restore'; // 👈 Asegúrate de tener esto importado
 import { motion } from 'framer-motion';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Dashboard from '../Dashboard';
@@ -57,7 +57,35 @@ const Flota = () => {
     cargar();
   }, []);
 
+  const handleConfirmarRestaurar = async () => {
+    setRestaurando(true);
+    try {
+      const url = `${window.location.hostname === "localhost" ? "http://localhost:9999" : ""}/.netlify/functions/restaurarVehiculos`;
+      const res = await fetch(url, { method: "POST" });
+      const result = await res.text();
+      const parsed = result ? JSON.parse(result) : { message: "Excel de vehículos restaurado" };
+      setSnackbar({ open: true, message: parsed.message });
 
+      // Recargar vehículos después de restaurar
+      await recargarVehiculos(); // 👈 asegúrate de tener esta función definida
+      setTimeout(() => {
+        setRestoreConfirmOpen(false);
+        setRestaurando(false);
+      }, 300);
+    } catch (err) {
+      console.error("❌ Error al restaurar Excel de vehículos:", err);
+      setSnackbar({ open: true, message: "Error al restaurar Excel de vehículos" });
+      setRestoreConfirmOpen(false);
+      setRestaurando(false);
+    }
+  };
+
+  const recargarVehiculos = async () => {
+    const timestamp = new Date().getTime();
+    const url = `https://masautomatizacion.s3.us-east-2.amazonaws.com/PruebaNodeRed_vehiculo.xlsx?t=${timestamp}`;
+    const data = await cargarVehiculos(url);
+    setVehiculos(data);
+  };
 
   return (
     <Container
@@ -126,29 +154,56 @@ const Flota = () => {
           {/* BOTONES */}
           <Box sx={{ display: 'flex', gap: 2, alignItems: 'stretch' }}>
             {!isMobile && (
-              <motion.div
-                initial={{ opacity: 0, x: 100 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
-              >
-                <Button
-                  variant="outlined"
-                  startIcon={<ArrowBackIcon />}
-                  sx={{
-                    height: 48,
-                    color: 'white',
-                    borderColor: 'white',
-                    fontWeight: 600,
-                    borderRadius: 2,
-                    '&:hover': {
-                      backgroundColor: 'rgba(255,255,255,0.1)',
-                    },
-                  }}
-                  onClick={() => navigate('/flotas')}
+              <>
+                <motion.div
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, ease: 'easeOut', delay: 0.2 }}
                 >
-                  Volver
-                </Button>
-              </motion.div>
+                  <Button
+                    variant="outlined"
+                    startIcon={<ArrowBackIcon />}
+                    sx={{
+                      height: 48,
+                      color: 'white',
+                      borderColor: 'white',
+                      fontWeight: 600,
+                      borderRadius: 2,
+                      '&:hover': {
+                        backgroundColor: 'rgba(255,255,255,0.1)',
+                      },
+                    }}
+                    onClick={() => navigate('/flotas')}
+                  >
+                    Volver
+                  </Button>
+                </motion.div>
+
+                {/* Nuevo botón Restaurar Vehículos */}
+                <motion.div
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.6, ease: 'easeOut', delay: 0.3 }}
+                >
+                  <Button
+                    variant="contained"
+                    startIcon={<RestoreIcon />}
+                    sx={{
+                      height: 48,
+                      backgroundColor: '#0064b4',
+                      color: 'white',
+                      fontWeight: 600,
+                      borderRadius: 2,
+                      '&:hover': {
+                        backgroundColor: '#004d8c',
+                      },
+                    }}
+                    onClick={() => setRestoreConfirmOpen(true)} // 👈 debe abrir el diálogo de confirmación
+                  >
+                    Restaurar vehículos
+                  </Button>
+                </motion.div>
+              </>
             )}
           </Box>
         </Box>
@@ -238,8 +293,8 @@ const Flota = () => {
                           }}
                         >
                           {isMobile
-                            ? flota.fecha_ingreso
-                            : `Fecha ingreso: ${flota.fecha_ingreso}`}
+                            ? flota.fecha_ingreso?.toString().slice(0, 10)
+                            : `Fecha ingreso: ${flota.fecha_ingreso?.toString().slice(0, 10)}`}
                         </Typography>
                         {/* Círculo con el ícono */}
                         <motion.div

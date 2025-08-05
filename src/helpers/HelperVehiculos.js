@@ -23,21 +23,29 @@ function normalizarVehiculos(data) {
       marca_vehiculo: row["marca_vehiculo"],
       modelo_vehiculo: row["modelo_vehiculo"],
       aseguradora: row["aseguradora"],
-      fecha_ingreso: convertirFechaExcel(row["fecha_ingreso"]),
+      fecha_ingreso: convertirFecha(row["fecha_ingreso"]),
       estado: "activo",
     }))
 
 
 }
+function convertirFecha(fecha) {
+  // Si es número (fecha serial de Excel)
+  if (typeof fecha === "number") {
+    const date = new Date(Math.round((fecha - 25569) * 86400 * 1000));
+    return date.toISOString().slice(0, 10); // "YYYY-MM-DD"
+  }
 
-function convertirFechaExcel(numeroSerie) {
-  const fechaBase = new Date(1900, 0, numeroSerie - 1); // Excel bug ajustado
-  const dia = String(fechaBase.getDate()).padStart(2, '0');
-  const mes = String(fechaBase.getMonth() + 1).padStart(2, '0');
-  const anio = fechaBase.getFullYear();
-  return `${dia}/${mes}/${anio}`;
+  // Si es string válido
+  if (typeof fecha === "string") {
+    const date = new Date(fecha);
+    if (!isNaN(date.getTime())) {
+      return date.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    }
+  }
+
+  return ""; // Si es inválido
 }
-
 
 export const cargarVehiculos = async (urlExcel) => {
   try {
