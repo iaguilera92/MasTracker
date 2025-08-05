@@ -115,6 +115,14 @@ function App() {
   }, [videoReady, location.pathname, navigate]);
 
 
+  useEffect(() => {
+    const isAuthenticated = sessionStorage.getItem("credenciales") !== null;
+    const rutasProtegidas = ["/home", "/dashboard", "/configurar-servicios"];
+
+    if (rutasProtegidas.includes(location.pathname) && !isAuthenticated) {
+      navigate("/login");
+    }
+  }, [location.pathname, navigate]);
 
 
   //LIMPIAR CACHE

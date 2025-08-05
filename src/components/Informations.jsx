@@ -2,10 +2,11 @@ import { Box, Typography, Container, Grid, Button, useMediaQuery, useTheme, Icon
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { useInView } from 'react-intersection-observer';  // Importa el hook
+import { useInView } from 'react-intersection-observer';
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import "./css/Informations.css"; // Importamos el CSS
 import "swiper/css";
+import BuildCircleIcon from '@mui/icons-material/BuildCircle';
 
 const anuncios = [
   {
@@ -89,7 +90,7 @@ const Informations = () => {
       const timeout = setTimeout(() => {
         swiperInstance.slideTo(0, 1000);
         setHasAnimated(true);
-      }, 1500);
+      }, 500);
 
       return () => clearTimeout(timeout);
     }
@@ -171,35 +172,37 @@ const Informations = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.6, ease: 'easeOut' }}
           >
-            <Typography
-              variant="h4"
-              gutterBottom
+            <Box
               sx={{
-                fontFamily: "'Montserrat', Helvetica, Arial, sans-serif !important",
-                fontSize: { xs: "1.5rem", md: "2rem" },
-                paddingLeft: { xs: "100px", md: "30px" },
-                paddingRight: { xs: "100px", md: "30px" },
-                letterSpacing: "3px",
-                my: 0,
-                display: "inline-block",
-                position: "relative",
-                zIndex: 1,
-                backgroundColor: "transparent",
-                color: "white",
-                "::after": {
-                  content: '""',
-                  position: "absolute",
-                  left: 0,
-                  right: 0,
-                  bottom: "-5px",
-                  height: "10px",
-                  backgroundColor: "transparent",
-                  zIndex: 2,
-                },
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: { xs: 1, md: 2 }, // Menor espacio entre icono y texto en mobile
+                mb: 1,
+                px: 2, // padding horizontal mínimo
               }}
             >
-              {isMobile ? "Servicios" : "Servicios Más Tracker"}
-            </Typography>
+              <BuildCircleIcon sx={{ fontSize: { xs: 28, md: 32 }, color: "#ffb905" }} />
+
+              <Typography
+                variant="h4"
+                gutterBottom
+                sx={{
+                  fontFamily: "'Montserrat', Helvetica, Arial, sans-serif !important",
+                  fontSize: { xs: "1.5rem", md: "2rem" },
+                  paddingLeft: { xs: 0, md: "0px" },  // ❗ Mobile sin padding
+                  paddingRight: { xs: 0, md: "30px" },
+                  letterSpacing: "3px",
+                  my: 0,
+                  position: "relative",
+                  zIndex: 1,
+                  color: "white",
+                }}
+              >
+                {isMobile ? "Servicios" : "Servicios Más Tracker"}
+              </Typography>
+            </Box>
+
 
           </motion.div>
 

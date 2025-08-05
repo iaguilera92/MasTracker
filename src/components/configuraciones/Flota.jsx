@@ -1,46 +1,16 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
   Box, Typography, Grid, Card, CardContent, Snackbar, Button, Alert, useTheme, useMediaQuery, Container, Collapse
 } from '@mui/material';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import AddIcon from '@mui/icons-material/Add';
+
 import { motion } from 'framer-motion';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import Dashboard from '../Dashboard';
 import CloseIcon from '@mui/icons-material/Close';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useNavigate } from 'react-router-dom';
-
-const flota = [
-  // Flota 1 (9 registros)
-  { id: '4560P1', vehiculo: 'HF JT 66', fechaIngreso: '2022-10-10', nombreFlota: 'Flota 1' },
-  { id: '4560P2', vehiculo: 'CU PX 94', fechaIngreso: '2022-10-11', nombreFlota: 'Flota 1' },
-  { id: '4560P3', vehiculo: 'BH YT 41', fechaIngreso: '2022-10-12', nombreFlota: 'Flota 1' },
-  { id: '4560P4', vehiculo: 'FV HB 13', fechaIngreso: '2022-10-16', nombreFlota: 'Flota 1' },
-  { id: '4560P5', vehiculo: 'AA AA 11', fechaIngreso: '2022-10-17', nombreFlota: 'Flota 1' },
-  { id: '4560P6', vehiculo: 'BB BB 22', fechaIngreso: '2022-10-18', nombreFlota: 'Flota 1' },
-  { id: '4560P7', vehiculo: 'CC CC 33', fechaIngreso: '2022-10-19', nombreFlota: 'Flota 1' },
-  { id: '4560P8', vehiculo: 'DD DD 44', fechaIngreso: '2022-10-20', nombreFlota: 'Flota 1' },
-  { id: '4560P9', vehiculo: 'EE EE 55', fechaIngreso: '2022-10-21', nombreFlota: 'Flota 1' },
-
-  // Flota 2 (5 registros)
-  { id: '4560P10', vehiculo: 'BW FM 16', fechaIngreso: '2022-10-16', nombreFlota: 'Flota 2' },
-  { id: '4560P11', vehiculo: 'CU PX 84', fechaIngreso: '2022-10-16', nombreFlota: 'Flota 2' },
-  { id: '4560P12', vehiculo: 'BH YT 71', fechaIngreso: '2022-10-17', nombreFlota: 'Flota 2' },
-  { id: '4560P13', vehiculo: 'FF FF 66', fechaIngreso: '2022-10-18', nombreFlota: 'Flota 2' },
-  { id: '4560P14', vehiculo: 'GG GG 77', fechaIngreso: '2022-10-19', nombreFlota: 'Flota 2' },
-
-  // Flota 3 (7 registros)
-  { id: '4560P15', vehiculo: 'DV HC 179', fechaIngreso: '2022-10-17', nombreFlota: 'Flota 3' },
-  { id: '4560P16', vehiculo: 'CF WY 13', fechaIngreso: '2022-10-20', nombreFlota: 'Flota 3' },
-  { id: '4560P17', vehiculo: 'HH HH 88', fechaIngreso: '2022-10-21', nombreFlota: 'Flota 3' },
-  { id: '4560P18', vehiculo: 'II II 99', fechaIngreso: '2022-10-22', nombreFlota: 'Flota 3' },
-  { id: '4560P19', vehiculo: 'JJ JJ 00', fechaIngreso: '2022-10-23', nombreFlota: 'Flota 3' },
-  { id: '4560P20', vehiculo: 'KK KK 10', fechaIngreso: '2022-10-24', nombreFlota: 'Flota 3' },
-  { id: '4560P21', vehiculo: 'LL LL 20', fechaIngreso: '2022-10-25', nombreFlota: 'Flota 3' },
-];
-
+import { cargarVehiculos } from '../../helpers/HelperVehiculos';
 
 const letterVariants = {
   hidden: { opacity: 0, x: -20 },
@@ -58,10 +28,12 @@ const Flota = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const dashboardRefs = useRef([]);
-  const { state } = useLocation();
-  const nombreFlota = state?.flota;
-  const vehiculosFiltrados = flota.filter(f => f.nombreFlota === nombreFlota);
   const navigate = useNavigate();
+  const [vehiculos, setVehiculos] = useState([]);
+  const location = useLocation();
+  const { idFlota, nombreFlota } = location.state || {};
+  const vehiculosFiltrados = vehiculos.filter(v => v.id_flota === idFlota);
+
 
   const handleExpandClick = (index) => {
     const wasExpanded = expandedIndex === index;
@@ -73,6 +45,18 @@ const Flota = () => {
       }, 300); // pequeño delay para que se renderice primero
     }
   };
+
+  useEffect(() => {
+    const cargar = async () => {
+      const timestamp = new Date().getTime();
+      const url = `https://masautomatizacion.s3.us-east-2.amazonaws.com/PruebaNodeRed_vehiculo.xlsx?t=${timestamp}`;
+      const data = await cargarVehiculos(url);
+      setVehiculos(data);
+    };
+
+    cargar();
+  }, []);
+
 
 
   return (
@@ -166,27 +150,6 @@ const Flota = () => {
                 </Button>
               </motion.div>
             )}
-
-            <motion.div
-              initial={{ opacity: 0, x: 100 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, ease: 'easeOut', delay: 0.4 }}
-            >
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                sx={{
-                  height: 48,
-                  backgroundColor: '#ffb905',
-                  color: 'black',
-                  fontWeight: 600,
-                  borderRadius: 2
-                }}
-                onClick={() => setSnackbar({ open: true, message: 'Función no implementada' })}
-              >
-                Agregar Flota
-              </Button>
-            </motion.div>
           </Box>
         </Box>
 
@@ -237,7 +200,8 @@ const Flota = () => {
                                 flexShrink: 0,
                               }}
                             >
-                              {flota.id}
+                              {flota.id_vehiculo}
+
                             </Box>
                           )}
 
@@ -257,7 +221,8 @@ const Flota = () => {
                               flexShrink: 0, // evita que se reduzca
                             }}
                           >
-                            Vehículo: {flota.vehiculo}
+                            Vehículo: {flota.patente}
+
                           </Box>
                         </Box>
 
@@ -273,8 +238,8 @@ const Flota = () => {
                           }}
                         >
                           {isMobile
-                            ? flota.fechaIngreso
-                            : `Fecha ingreso: ${flota.fechaIngreso}`}
+                            ? flota.fecha_ingreso
+                            : `Fecha ingreso: ${flota.fecha_ingreso}`}
                         </Typography>
                         {/* Círculo con el ícono */}
                         <motion.div
@@ -310,7 +275,7 @@ const Flota = () => {
                     {/* Contenido Expandible con animación */}
                     <Collapse in={expandedIndex === index} timeout="auto" unmountOnExit>
                       <Box sx={{ px: 2, pt: 0, pb: 2, backgroundColor: 'white' }}>
-                        <Dashboard />
+                        <Dashboard vehiculo={flota} />
                       </Box>
                     </Collapse>
 
