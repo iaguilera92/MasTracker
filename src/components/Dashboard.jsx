@@ -10,7 +10,7 @@ import {
 import { useInView } from "react-intersection-observer";
 import { motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
-import { MapContainer, TileLayer, Marker, useMapEvent } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMapEvent, Polyline } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import SpeedIcon from "@mui/icons-material/Speed";
@@ -21,29 +21,31 @@ import ThermostatIcon from "@mui/icons-material/Thermostat";
 import AltRouteIcon from "@mui/icons-material/AltRoute";
 
 const Contador = ({ valorFinal, texto, subtexto, delay = 0, variant = "h5", iniciar }) => {
-    const [valor, setValor] = useState(0);
+    const [valor, setValor] = useState(valorFinal || 0);
+    const valorAnterior = useRef(valorFinal || 0);
+    const animando = useRef(false);
 
     useEffect(() => {
-        if (!iniciar) return;
+        if (!iniciar || valorFinal === valorAnterior.current || animando.current) return;
 
-        let start = 0;
-        const duration = 2000;
-        const steps = 60;
-        const increment = valorFinal / steps;
+        animando.current = true;
+
+        let start = valorAnterior.current;
+        const duration = 1000;
+        const steps = 30;
+        const increment = (valorFinal - start) / steps;
         const stepTime = duration / steps;
-
-        if (valorFinal === 0) {
-            setValor(0);
-            return;
-        }
 
         const timeout = setTimeout(() => {
             const interval = setInterval(() => {
                 start += increment;
-                const nuevoValor = Math.ceil(start);
-                if (nuevoValor >= valorFinal) {
-                    setValor(valorFinal); // ⬅️ asegura el valor exacto
+                const nuevoValor = Math.round(start);
+
+                if ((increment > 0 && nuevoValor >= valorFinal) || (increment < 0 && nuevoValor <= valorFinal)) {
+                    setValor(valorFinal);
+                    valorAnterior.current = valorFinal;
                     clearInterval(interval);
+                    animando.current = false;
                 } else {
                     setValor(nuevoValor);
                 }
@@ -64,47 +66,106 @@ const Contador = ({ valorFinal, texto, subtexto, delay = 0, variant = "h5", inic
 };
 
 
-const Dashboard = () => {
+
+const Dashboard = ({ vehiculo }) => {
+
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
     const cardSize = isMobile ? "300px" : "340px";
     const smallCardSize = isMobile ? "140px" : "165px";
-
+    const nombre = vehiculo?.patente || "Vehículo";
     const [snackbarServicios, setSnackbarServicios] = useState(false);
     const [usuario, setUsuario] = useState(null);
+    const historialRef = useRef([]);
+    const extraerCoordenadas = (valor) => {
+        if (!valor || typeof valor !== 'string') return [-33.45, -70.66];
+
+        const partes = valor.split(",").map(s => parseFloat(s.trim()));
+        if (partes.length !== 2 || partes.some(isNaN)) return [-33.45, -70.66];
+
+        return partes;
+    };
+    const finalPosition = extraerCoordenadas(vehiculo?.coordenadas);
+    const [position, setPosition] = useState(finalPosition);
+    const posicionInicial = useRef(finalPosition);
+
+
+
     useEffect(() => {
         const usuarioGuardado = JSON.parse(sessionStorage.getItem("usuario"));
         if (usuarioGuardado) {
             setUsuario(usuarioGuardado);
         }
     }, []);
+    const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
+    const yaHizoZoom = useRef(false);
 
-
-    const letterVariants = {
-        hidden: { opacity: 0, x: -20 },
-        visible: (i) => ({
-            opacity: 1,
-            x: 0,
-            transition: { delay: 0.4 + i * 0.05 }, // puedes ajustar el delay aquí
-        }),
-    };
     const navigate = useNavigate();
 
-    const finalPosition = [-33.45, -70.66]; // ubicación por defecto (ej: Santiago)
-    const nombre = "Vehículo 1"; // título dinámico
+
     const initialZoom = 3; // Zoom inicial lejano
     const finalZoom = 17; // Zoom final al que queremos llegar
 
     const data = {
-        speed: 65,
-        rpm: 2300,
-        load: 78,
-        fuel: 52,
-        coolant: 89,
-        odometer: 42536,
+        speed: parseInt(vehiculo?.velocidad || 0),
+        rpm: parseInt(vehiculo?.rpm || 0),
+        load: parseInt(vehiculo?.carga_motor || 0),
+        fuel: parseInt(vehiculo?.combustible || 0),
+        coolant: parseInt(vehiculo?.temperatura || 0),
+        odometer: parseInt(vehiculo?.odometro || 0),
     };
 
+    useEffect(() => {
+        const nuevaPosicion = extraerCoordenadas(vehiculo?.coordenadas);
+
+        const mismaPos =
+            nuevaPosicion[0] === position[0] &&
+            nuevaPosicion[1] === position[1];
+
+        if (!mismaPos) {
+            setPosition(nuevaPosicion);
+            historialRef.current = [...historialRef.current, nuevaPosicion];
+        }
+    }, [vehiculo]);
+
+
+
+    const MoverMapa = ({ position }) => {
+        const map = useMapEvent("load", () => { });
+        const ultimaPos = useRef(null);
+
+        useEffect(() => {
+            if (!map || !position) return;
+
+            // Inicializa ultimaPos si es null
+            if (!ultimaPos.current) {
+                ultimaPos.current = [...position];
+                return;
+            }
+
+            const mismaPos =
+                ultimaPos.current[0] === position[0] &&
+                ultimaPos.current[1] === position[1];
+
+            if (!mismaPos) {
+                map.flyTo(position, map.getZoom(), {
+                    animate: true,
+                    duration: 1.0,
+                });
+                ultimaPos.current = [...position];
+            }
+        }, [position]);
+
+        return null;
+    };
+
+
+    const marcarZoomRealizado = () => {
+        yaHizoZoom.current = true;
+    };
+    useEffect(() => {
+        historialRef.current = []; // Limpiar al cargar nuevo vehículo
+    }, [vehiculo.id_vehiculo]);
 
     return (
         <Box
@@ -145,7 +206,7 @@ const Dashboard = () => {
 
                         <MapContainer
                             preferCanvas
-                            center={finalPosition}
+                            center={posicionInicial.current}
                             zoom={initialZoom}
                             style={{
                                 width: "100%",
@@ -156,10 +217,13 @@ const Dashboard = () => {
                             touchZoom={false}
                             doubleClickZoom={false}
                         >
+                            <MoverMapa position={position} />
+
                             <ZoomEffect
                                 zoom={finalZoom}
-                                startAnimation={true}
+                                startAnimation={!yaHizoZoom.current}
                                 finalPosition={finalPosition}
+                                onZoomEnd={marcarZoomRealizado}
                             />
 
                             <TileLayer
@@ -169,20 +233,27 @@ const Dashboard = () => {
                                 maxZoom={17}
                                 noWrap
                             />
-                            <Marker
-                                position={finalPosition}
-                                icon={new L.Icon({
-                                    iconUrl: "/logo-car.png",
-                                    iconSize: [85, 85],
-                                    iconAnchor: [42.5, 42.5], // centrado exacto
-                                    popupAnchor: [0, -42.5],  // opcional si usas popups
-                                })}
+                            <Polyline
+                                positions={historialRef.current}
+                                pathOptions={{
+                                    color: "#ff4d4d",
+                                    weight: 4,
+                                    opacity: 0.8,
+                                    dashArray: "6, 8", // discontinua
+                                }}
                             />
+
+                            <MarkerAnimado
+                                nuevaPosicion={position}
+                                iconUrl="/logo-car.png"
+                            />
+
+
 
                         </MapContainer>
                         <Grid container justifyContent="space-between" alignItems="center">
                             <Typography variant="body2" sx={{ color: "gray", fontStyle: "italic" }}>
-                                OBDII ⏱ Hace un minuto
+                                OBDII ⏱ Hace 5 Segundos
                             </Typography>
                         </Grid>
                         <Grid container spacing={1}>
@@ -293,11 +364,11 @@ const Dashboard = () => {
 
     );
 };
-const ZoomEffect = ({ zoom, startAnimation, finalPosition }) => {
+const ZoomEffect = ({ zoom, startAnimation, finalPosition, onZoomEnd }) => {
+
     const map = useMapEvent("load", () => { });
     const zoomApplied = useRef(false);
     const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.3 });
-    const isMobile = useMediaQuery("(max-width:600px)");
 
     useEffect(() => {
         if (!map || !inView || zoomApplied.current || !startAnimation) return;
@@ -305,18 +376,69 @@ const ZoomEffect = ({ zoom, startAnimation, finalPosition }) => {
         zoomApplied.current = true;
 
         const delayTimer = setTimeout(() => {
-            const correctedPosition = [...finalPosition]; // no aplicar offset
-            map.flyTo(correctedPosition, zoom, {
+            map.flyTo(finalPosition, zoom, {
                 animate: true,
                 duration: 1.5,
                 easeLinearity: 1,
             });
+
+            if (typeof onZoomEnd === 'function') {
+                onZoomEnd(); // ✅ aquí marcamos que ya se hizo el zoom
+            }
+
         }, 800);
 
         return () => clearTimeout(delayTimer);
-    }, [inView, map, zoom, isMobile, startAnimation, finalPosition]);
+    }, [inView, map, zoom, startAnimation, finalPosition]);
+
 
     return <div ref={ref} style={{ width: "100%", height: "100%" }} />;
+};
+
+const MarkerAnimado = ({ nuevaPosicion, iconUrl }) => {
+    const [posicionAnimada, setPosicionAnimada] = useState(nuevaPosicion);
+    const markerRef = useRef();
+
+    useEffect(() => {
+        if (!nuevaPosicion || !markerRef.current) return;
+
+        const marker = markerRef.current;
+        const duracion = 500; // ms
+        const pasos = 20;
+        const delay = duracion / pasos;
+
+        const latIni = posicionAnimada[0];
+        const lngIni = posicionAnimada[1];
+        const latFin = nuevaPosicion[0];
+        const lngFin = nuevaPosicion[1];
+
+        let i = 0;
+
+        const intervalo = setInterval(() => {
+            i++;
+            const frac = i / pasos;
+            const lat = latIni + (latFin - latIni) * frac;
+            const lng = lngIni + (lngFin - lngIni) * frac;
+            setPosicionAnimada([lat, lng]);
+
+            if (i >= pasos) clearInterval(intervalo);
+        }, delay);
+
+        return () => clearInterval(intervalo);
+    }, [nuevaPosicion]);
+
+    return (
+        <Marker
+            ref={markerRef}
+            position={posicionAnimada}
+            icon={new L.Icon({
+                iconUrl: iconUrl,
+                iconSize: [85, 85],
+                iconAnchor: [42.5, 42.5],
+                popupAnchor: [0, -42.5],
+            })}
+        />
+    );
 };
 
 

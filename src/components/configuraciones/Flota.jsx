@@ -87,6 +87,14 @@ const Flota = () => {
     setVehiculos(data);
   };
 
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      recargarVehiculos();
+    }, 5000); // cada 5 segundos
+
+    // Cleanup para evitar fugas de memoria si se desmonta el componente
+    return () => clearInterval(intervalo);
+  }, []);
   return (
     <Container
       maxWidth={false}
